@@ -1,12 +1,11 @@
 <template>
-  <v-container class="pa-0" v-if="ready">
-    <Post v-if="user" :user="user" @change="setTweets()" />
+  <v-container class="pa-0">
     <v-list class="ma-0 pa-0 transparent">
-      <div v-for="t in tweets.slice().reverse()" :key="t.id">
+      <div v-for="r in replies.slice().reverse()" :key="r.id">
         <ReplyModal
           v-if="selectedTweet"
           :selectedPost="selectedTweet"
-          :post="t"
+          :post="r"
           @done="selectedTweet = undefined"
         />
         <v-list-item
@@ -14,61 +13,58 @@
           class="border-bottom font-11 white--text d-flex align-start"
         >
           <v-col cols="1" class="pl-2">
-            <v-avatar :color="getUserById(t.userId).color" :size="avatarSize">{{
-              getUserById(t.userId).name.toUpperCase().substring(0, 1)
+            <v-avatar :color="getUserById(r.userId).color" :size="avatarSize">{{
+              getUserById(r.userId).name.toUpperCase().substring(0, 1)
             }}</v-avatar>
           </v-col>
           <v-col>
-            <div @click="$router.push(`/tweet/${t.id}`)">
+            <div>
               <div>
                 <b>
-                  {{ getUserById(t.userId).name }}
+                  {{ getUserById(r.userId).name }}
                 </b>
                 <span class="grey--text">
-                  {{ getUserById(t.userId).handle }} -
-                  <!-- <TimeAgo
-                    :since="t.date"
-                    :auto-update="60"
-                    :format="formatTime"
-                  ></TimeAgo> -->
-                  <span> {{ formatDate(t.date) }} </span>
+                  {{ getUserById(r.userId).handle }} - {{ formatDate(r.date) }}
+                </span>
+              </div>
+              <div class="grey--text">
+                <span v-if="getUserById(tweet.userId)">
+                  replying to
+                  <span class="blue--text" v-if="r.recipient">
+                    {{ r.recipient }}
+                  </span>
+                  <span class="blue--text" v-else>
+                    {{ getUserById(tweet.userId).handle }}</span
+                  >
                 </span>
               </div>
               <div>
-                {{ t.content }}
-                <span v-if="t.hashtag" class="blue--text">
-                  &#35;{{ t.hashtag }}
-                </span>
+                {{ r.content }}
               </div>
             </div>
             <v-row>
               <v-col v-for="i in options.tweet.icons" :key="i.name">
                 <v-chip
                   class="transparent highlight"
-                  @click="interact(t, i.name)"
+                  @click="interact(r, i.name)"
                 >
                   <span
                     v-if="i.name == 'Like'"
                     v-bind:class="{
-                      'red--text': hasLiked(t),
+                      'red--text': hasLiked(r),
                     }"
                   >
                     <Icon
                       :width="iconSize"
                       :icon="i.iconAlternative"
-                      v-if="hasLiked(t)"
+                      v-if="hasLiked(r)"
                     />
 
                     <Icon :width="iconSize" :icon="i.icon" v-else />
                   </span>
-
                   <Icon :width="iconSize" :icon="i.icon" v-else />
-
                   <span v-if="i.name == 'Like'" class="ml-1">
-                    {{ t.tweetLikes.length }}
-                  </span>
-                  <span v-if="i.name == 'Reply'" class="ml-1">
-                    {{ t.replies.length }}
+                    {{ r.replyLikes.length }}
                   </span>
                 </v-chip>
               </v-col>
@@ -76,10 +72,10 @@
           </v-col>
           <v-col cols="1" class="mr-3">
             <Options
-              :options="more(t)"
+              :options="more(r)"
               :width="20"
               @option="selectOption"
-              @interact="interact(t, selectedOption)"
+              @interact="interact(r, selectedOption)"
             />
           </v-col>
         </v-list-item>
@@ -92,54 +88,48 @@
 import { Icon } from '@iconify/vue2';
 import data from '@/data/data.js';
 import helpers from '@/services/helpers.js';
-
 import breakpoints from '@/data/breakpoints.js';
-// import { TimeAgo } from 'vue2-timeago';
 
 export default {
-  name: 'Home',
+  name: 'TweetReplies',
 
   components: {
     Icon,
-    Post: () => import('@/components/Post.vue'),
     Options: () => import('@/components/Options.vue'),
     ReplyModal: () => import('@/components/ReplyModal.vue'),
-    // TimeAgo,
   },
 
   mounted() {
-    this.setUsers();
-    this.setTweets();
+    // this.setUsers();
   },
+
+  props: {
+    tweet: Object,
+  },
+
+  data: () => ({ selectedTweet: undefined, selectedOption: undefined }),
 
   watch: {
-    tweets() {
-      // this.setTweets();
-    },
-    users() {
-      // this.setUsers();
+    replies() {
+      this.setReplies();
     },
   },
 
-  data: () => ({
-    selectedOption: undefined,
-    selectedTweet: undefined,
-    // modal: false,
-  }),
-
   computed: {
-    ready() {
-      return this.tweets && this.users ? true : false;
-    },
     options() {
       return data.options;
     },
 
+    //eval
     avatarSize() {
       return breakpoints.avatarSize(this.$vuetify.breakpoint.name);
     },
     iconSize() {
       return breakpoints.iconSize(this.$vuetify.breakpoint.name);
+    },
+
+    validate() {
+      return helpers.validateLength(this.post);
     },
 
     //state
@@ -151,32 +141,27 @@ export default {
     users() {
       return this.$store.getters.users;
     },
-    tweets() {
-      return this.$store.getters.tweets;
+    replies() {
+      return this.$store.getters.replies.filter(
+        (x) => x.tweetId == this.tweet.id
+      );
     },
   },
 
   methods: {
-    more(t) {
-      if (t.userId == this.user.id) {
+    more(r) {
+      if (r.userId == this.user.id) {
         return data.more.ownedTweet;
       } else {
         return data.more.tweet;
       }
     },
-    setUsers() {
-      this.axios.get('https://localhost:44343/api/users').then((ret) => {
+    setReplies() {
+      this.axios.get('https://localhost:44343/api/replies').then((ret) => {
         console.log(ret);
-        this.$store.dispatch('setUsers', ret.data);
+        this.$store.dispatch('setReplies', ret.data);
       });
     },
-    setTweets() {
-      this.axios.get('https://localhost:44343/api/tweets').then((ret) => {
-        //  console.log(ret);
-        this.$store.dispatch('setTweets', ret.data);
-      });
-    },
-
     getUserById(id) {
       return this.users.filter((user) => user.id == id)[0];
     },
@@ -185,34 +170,39 @@ export default {
       this.selectedOption = o;
     },
 
-    interact(tweet, option) {
+    interact(reply, option) {
       if (option == 'Like') {
         this.axios
-          .put(`https://localhost:44343/api/tweets/like/${tweet.id}`, this.user)
+          .put(
+            `https://localhost:44343/api/replies/like/${reply.id}`,
+            this.user
+          )
           .then((ret) => {
             console.log(ret);
-            this.setTweets();
+            this.setReplies();
           });
       }
       if (option == 'Delete') {
-        console.log(tweet);
         this.axios
-          .delete(`https://localhost:44343/api/tweets/delete/${tweet.id}`)
+          .delete(`https://localhost:44343/api/replies/delete/${reply.id}`)
           .then((ret) => {
             console.log(ret);
-            this.setTweets();
+            this.setReplies();
           });
       }
       if (option == 'Reply') {
-        this.selectedTweet = tweet;
-        // this.modal = true;
+        this.selectedTweet = reply;
       }
     },
 
-    hasLiked(tweet) {
+    formatDate(date) {
+      return helpers.formatDate(date);
+    },
+
+    hasLiked(reply) {
       let res;
 
-      tweet.tweetLikes.forEach((entry) => {
+      reply.replyLikes.forEach((entry) => {
         // console.log(entry.userId, this.user.id);
         if (entry.userId == this.user.id) {
           // console.log('true');
@@ -222,10 +212,6 @@ export default {
         }
       });
       return res;
-    },
-
-    formatDate(date) {
-      return helpers.formatDate(date);
     },
   },
 };

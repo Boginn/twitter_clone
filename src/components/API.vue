@@ -13,6 +13,8 @@
 export default {
   name: 'API',
 
+  mounted() {},
+
   data: () => ({}),
 
   methods: {
@@ -23,15 +25,30 @@ export default {
       });
     },
     pharcPost() {
-      this.axios
-        .post('https://localhost:44343/api/tweets', {
-          Content: 'postasdasd',
-          Likes: '10',
-          UserId: '2',
-        })
-        .then((ret) => {
-          console.log(ret);
-        });
+      this.$store.getters.tweets.forEach((t) => {
+        this.axios
+          .post('https://localhost:44343/api/tweets/create', {
+            content: t.content,
+            userId: t.userId,
+            likes: t.likes,
+          })
+          .then((ret) => {
+            console.log(ret);
+          });
+      });
+      this.$store.getters.users.forEach((u) => {
+        this.axios
+          .post('https://localhost:44343/api/users/create', {
+            name: u.name,
+            color: u.color,
+            handle: u.handle,
+            // tweets: u.tweets,
+            // Replies: u.replies,
+          })
+          .then((ret) => {
+            console.log(ret);
+          });
+      });
     },
   },
 };

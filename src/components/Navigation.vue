@@ -46,15 +46,24 @@
         class="white--text black ml-1"
         :to="$router.currentRoute.path"
       >
-        <v-chip class="transparent pa-0">
+        <v-chip
+          class="transparent pa-0"
+          v-bind:class="{ 'blue--text': isDeveloper }"
+          @click="$store.dispatch('toggleIsDeveloper')"
+        >
           <Icon width="30" icon="akar-icons:twitter-fill" />
         </v-chip>
       </router-link>
     </v-list-item>
 
     <v-list dense nav class="br-15">
-      <v-list-item class="br-15" v-for="route in routes" :key="route.name" link>
-        <div class="d-flex align-center">
+      <v-list-item
+        link
+        class="br-15 link"
+        v-for="route in routes"
+        :key="route.name"
+      >
+        <div class="d-flex align-center" @click="pushRoute(route.path)">
           <v-list-item-icon>
             <Icon width="25" :icon="route.icon" />
           </v-list-item-icon>
@@ -71,9 +80,11 @@
         x-large
         rounded
         class="btn primary no-transform stretch pa-1"
+        @click="modal = true"
         >Tweet</v-btn
       >
       <v-btn v-else small class="btn br-100 primary no-transform pa-5">+</v-btn>
+      <PostModal v-if="modal" @done="modal = false" />
     </v-col>
   </v-container>
 </template>
@@ -84,15 +95,29 @@ export default {
   name: 'Navigation',
   components: {
     Icon,
+    PostModal: () => import('@/components/PostModal.vue'),
   },
 
   props: {
     routes: Array,
   },
 
+  data: () => ({ modal: false }),
+
   computed: {
     mdAndUp() {
       return this.$vuetify.breakpoint.mdAndUp;
+    },
+    isDeveloper() {
+      return this.$store.getters.isDeveloper;
+    },
+  },
+
+  methods: {
+    pushRoute(route) {
+      if (this.$router.currentRoute.path != route) {
+        this.$router.push(route);
+      }
     },
   },
 };

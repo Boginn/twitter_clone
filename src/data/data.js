@@ -2,33 +2,33 @@ const routes = {
   home: [
     {
       name: 'Home',
-      path: 'home',
+      path: '/',
       icon: 'bx:bx-home-circle',
       color: 'vuegrey',
     },
     {
       name: 'Explore',
-      path: 'explore',
+      path: '/explore',
       icon: 'akar-icons:hashtag',
       color: 'vuegrey',
     },
 
     {
       name: 'Notifications',
-      path: 'notifications',
+      path: '/notifications',
       icon: 'ion:notifications-outline',
       color: 'vuegrey',
     },
 
     {
       name: 'Messages',
-      path: 'messages',
+      path: '/messages',
       icon: 'ep:message',
       color: 'vuegrey',
     },
     {
       name: 'Bookmarks',
-      path: 'bookmarks',
+      path: '/bookmarks',
       icon: 'bi:bookmark',
       color: 'vuegrey',
     },
@@ -76,7 +76,8 @@ const options = {
       {
         name: 'Like',
         path: '',
-        icon: 'akar-icons:heart',
+        icon: 'ant-design:heart',
+        iconAlternative: 'ant-design:heart-filled',
       },
       {
         name: 'Share',
@@ -123,7 +124,34 @@ const options = {
   },
 };
 
+const more = {
+  trending: [
+    { value: 'Not interested in this' },
+    { value: 'This trend is harmful or spammy' },
+  ],
+  tweet: [{ value: 'Follow' }, { value: 'Block' }, { value: 'Report' }],
+  ownedTweet: [{ value: 'Delete' }],
+};
+
+const rules = {
+  name: [
+    (v) => !!v || 'A name is required',
+    (v) => (v && v.length <= 10) || 'Name must be less than 10 characters',
+  ],
+  post: [
+    (v) => !!v || '',
+    (v) => (v && v.length <= 280) || 'Must not exceed 280 characters.',
+  ],
+  reply: [
+    (v) => !!v || '',
+    (v) => (v && v.length <= 280) || '280 characters maximum.',
+  ],
+  default: [(v) => !!v || 'Item is required'],
+};
+
 export default {
   routes,
   options,
+  more,
+  rules,
 };

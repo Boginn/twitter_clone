@@ -9,6 +9,11 @@ const routes = [
     name: 'Home',
     component: () => import('../views/Home.vue'),
   },
+  {
+    path: '/tweet/:id',
+    name: 'Tweet',
+    component: () => import('../views/Tweet.vue'),
+  },
 ];
 
 const router = new VueRouter({

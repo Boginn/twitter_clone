@@ -10,14 +10,21 @@
     >
       <v-col
         cols="5"
-        class="overlay ma-0 pa-0"
+        class="blur ma-0 pa-0"
         style="padding-right: 3px !important"
       >
         <div
-          class="d-flex justify-start border-right"
+          class="d-flex justify-start border-right align-center"
           style="padding-top: 25px"
         >
-          Home
+          <span v-if="$route.name != 'Home'"
+            ><v-chip class="transparent"
+              ><v-icon small @click="$router.push('/')"
+                >mdi-arrow-left</v-icon
+              ></v-chip
+            ></span
+          >
+          {{ $route.name }}
         </div>
       </v-col>
       <v-col cols="4">
@@ -32,7 +39,7 @@
             clearable
             append-icon="mdi-magnify"
             :open-on-click="false"
-            style="padding-top: 25px"
+            style="padding-top: 25px; max-width: 450px !important"
             class="br-25"
           >
           </v-autocomplete>
@@ -53,7 +60,7 @@
     </v-navigation-drawer>
 
     <v-main class="black">
-      <router-view />
+      <Main />
     </v-main>
   </v-app>
 </template>
@@ -65,7 +72,14 @@ export default {
   name: 'App',
 
   components: {
+    Main: () => import('@/views/Main.vue'),
     Navigation: () => import('@/components/Navigation.vue'),
+  },
+
+  mounted() {
+    this.setUsers();
+    this.setTweets();
+    this.setReplies();
   },
 
   data: () => ({
@@ -82,6 +96,9 @@ export default {
   },
 
   computed: {
+    time() {
+      return new Date();
+    },
     routes() {
       return data.routes.home;
     },
@@ -104,19 +121,46 @@ export default {
       return 100;
     },
   },
+
+  methods: {
+    setUsers() {
+      this.axios.get('https://localhost:44343/api/users').then((ret) => {
+        console.log(ret);
+        this.$store.dispatch('setUsers', ret.data);
+      });
+    },
+    setTweets() {
+      this.axios.get('https://localhost:44343/api/tweets').then((ret) => {
+        console.log(ret);
+        this.$store.dispatch('setTweets', ret.data);
+      });
+    },
+    setReplies() {
+      this.axios.get('https://localhost:44343/api/replies').then((ret) => {
+        console.log(ret);
+        this.$store.dispatch('setReplies', ret.data);
+      });
+    },
+  },
 };
 </script>
 
 <style>
-.overlay {
-  backdrop-filter: blur(6px);
-}
 /* helpers */
 .stretch {
   width: 100% !important;
 }
 .no-transform {
   text-transform: none !important;
+}
+.blur {
+  backdrop-filter: blur(6px) !important;
+}
+.highlight:hover {
+  cursor: pointer !important;
+}
+.opacity {
+  opacity: 0.5 !important;
 }
 /* .code {
   font-family: 'Courier New', Courier, monospace;

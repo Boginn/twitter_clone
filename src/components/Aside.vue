@@ -1,25 +1,9 @@
 <template>
-  <v-container>
-    <v-card class="secondary">
-      <v-list class="transparent">
-        <v-list-item>
-          <v-list-item-content>
-            <v-list-item-title class="text-h6"> Application </v-list-item-title>
-          </v-list-item-content>
-        </v-list-item>
-      </v-list>
-
-      <v-divider></v-divider>
-
-      <v-list dense nav class="transparent">
-        <v-list-item v-for="item in items" :key="item.title" link>
-          <v-list-item-content>
-            <v-list-item-title>{{ item.title }}</v-list-item-title>
-          </v-list-item-content>
-        </v-list-item>
-      </v-list>
-      <API />
-    </v-card>
+  <v-container class="stay">
+    <SwitchUser v-if="isDeveloper" />
+    <AddUser v-if="isDeveloper" />
+    <DeleteUser v-if="isDeveloper" />
+    <Trending />
   </v-container>
 </template>
 
@@ -31,21 +15,27 @@ export default {
 
   components: {
     // Icon,
-    API: () => import('@/components/API.vue'),
+    SwitchUser: () => import('@/components/SwitchUser.vue'),
+    AddUser: () => import('@/components/AddUser.vue'),
+    DeleteUser: () => import('@/components/DeleteUser.vue'),
+    Trending: () => import('@/components/Trending.vue'),
   },
 
-  data: () => ({
-    items: [
-      { tweetId: 1, title: 'Dashboard' },
-      { tweetId: 2, title: 'Photos' },
-      { tweetId: 3, title: 'About' },
-    ],
-  }),
-
-  computed: {},
-
-  methods: {},
+  computed: {
+    //state
+    users() {
+      return this.$store.getters.users;
+    },
+    isDeveloper() {
+      return this.$store.getters.isDeveloper;
+    },
+  },
 };
 </script>
 
-<style scoped></style>
+<style scoped>
+.stay {
+  position: fixed !important;
+  max-width: 450px !important;
+}
+</style>
