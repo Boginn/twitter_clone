@@ -1,5 +1,5 @@
 <template>
-  <v-container class="stay">
+  <v-container class="max-width stay">
     <SwitchUser v-if="isDeveloper" />
     <AddUser v-if="isDeveloper" />
     <DeleteUser v-if="isDeveloper" />
@@ -34,8 +34,7 @@ export default {
 </script>
 
 <style scoped>
-.stay {
-  position: fixed !important;
+.max-width {
   max-width: 450px !important;
 }
 </style>

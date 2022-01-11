@@ -59,7 +59,7 @@
       <Navigation :routes="routes" />
     </v-navigation-drawer>
 
-    <v-main class="black">
+    <v-main class="black d-flex">
       <Main />
     </v-main>
   </v-app>
@@ -147,6 +147,9 @@ export default {
 
 <style>
 /* helpers */
+.stay {
+  position: fixed !important;
+}
 .stretch {
   width: 100% !important;
 }
@@ -199,6 +202,9 @@ export default {
 
 /* config */
 
+.v-application {
+  font-family: 'Roboto', Tahoma, Geneva, Verdana, sans-serif !important;
+}
 * {
   margin: 0px !important;
 }
@@ -227,9 +233,5 @@ a {
 }
 ::-webkit-scrollbar-corner {
   opacity: 0;
-}
-
-.v-application {
-  font-family: 'Roboto', Tahoma, Geneva, Verdana, sans-serif !important;
 }
 </style>

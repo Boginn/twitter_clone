@@ -1,46 +1,5 @@
 <template>
-  <!-- <v-container class="black mt-0 pt-0">
-    <v-list class="ma-0">
-      <v-col class="pb-0">
-        <router-link
-          class="white--text black ml-1"
-          :to="$router.currentRoute.path"
-        >
-          <v-chip class="transparent pa-0">
-            <Icon width="30" icon="akar-icons:twitter-fill" />
-          </v-chip>
-        </router-link>
-      </v-col>
-
-      <v-col class="pa-0" cols="12" v-for="route in routes" :key="route.name">
-        <v-card class="d-flex black" elevation="0">
-          <router-link
-            class="white--text black"
-            :to="`/${route.name.toLowerCase()}/`"
-          >
-            <v-card-title class="link">
-              <Icon width="25" :icon="route.icon" />
-              <span v-if="mdAndUp" class="ml-3"> {{ route.name }} </span>
-            </v-card-title>
-          </router-link>
-        </v-card>
-      </v-col>
-      <v-col class="pa-1" cols="12">
-        <v-btn
-          v-if="mdAndUp"
-          x-large
-          rounded
-          class="btn primary no-transform stretch pa-6"
-          >Tweet</v-btn
-        >
-        <v-btn v-else small class="btn br-100 primary no-transform pa-5"
-          >+</v-btn
-        >
-      </v-col>
-    </v-list>
-  </v-container> -->
-
-  <v-container>
+  <v-container class="max-width">
     <v-list-item>
       <router-link
         class="white--text black ml-1"
@@ -56,7 +15,7 @@
       </router-link>
     </v-list-item>
 
-    <v-list dense nav class="br-15">
+    <v-list dense nav class="br-15 black">
       <v-list-item
         link
         class="br-15 link"
@@ -124,6 +83,9 @@ export default {
 </script>
 
 <style scoped>
+.max-width {
+  max-width: 230px !important;
+}
 .link {
   padding-top: 5px;
   padding-bottom: 5px;
