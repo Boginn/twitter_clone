@@ -1,9 +1,13 @@
 <template>
   <v-container class="max-width stay">
-    <SwitchUser v-if="isDeveloper" />
-    <AddUser v-if="isDeveloper" />
-    <DeleteUser v-if="isDeveloper" />
-    <Trending />
+    <span v-if="isDeveloper">
+      <SwitchUser />
+      <AddUser />
+      <DeleteUser />
+    </span>
+    <span v-else>
+      <Trending />
+    </span>
   </v-container>
 </template>
 

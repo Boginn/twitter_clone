@@ -12,12 +12,30 @@ export default new Vuetify({
         secondary: '#15181c',
 
         bgcolor: '#000000',
-        accent: '#000081',
+        text: '#FFFFFF',
+        logo: '#FFFFFF',
 
-        vuegrey: '#babbc3',
+        accent: '#000081',
         error: '#e42315',
         success: '#24aa0e',
         balance: '#172f85',
+
+        vuegrey: '#babbc3',
+      },
+      light: {
+        primary: '#1d9bf0',
+        secondary: '#fdfdfb',
+
+        bgcolor: '#FFFFFF',
+        text: '#000000',
+        logo: '#1d9bf0',
+
+        accent: '#000081',
+        error: '#e42315',
+        success: '#24aa0e',
+        balance: '#172f85',
+
+        vuegrey: '#babbc3',
       },
     },
   },

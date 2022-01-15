@@ -1,13 +1,13 @@
 <template>
-  <v-container class="max-width">
+  <v-container class="bgcolor">
     <v-list-item>
-      <router-link
-        class="white--text black ml-1"
-        :to="$router.currentRoute.path"
-      >
+      <router-link class="white--text ml-1" :to="$router.currentRoute.path">
         <v-chip
           class="transparent pa-0"
-          v-bind:class="{ 'blue--text': isDeveloper }"
+          v-bind:class="{
+            'red--text': isDeveloper,
+            'logo--text': !isDeveloper,
+          }"
           @click="$store.dispatch('toggleIsDeveloper')"
         >
           <Icon width="30" icon="akar-icons:twitter-fill" />
@@ -15,7 +15,7 @@
       </router-link>
     </v-list-item>
 
-    <v-list dense nav class="br-15 black">
+    <v-list dense nav class="br-15">
       <v-list-item
         link
         class="br-15 link"
@@ -23,11 +23,11 @@
         :key="route.name"
       >
         <div class="d-flex align-center" @click="pushRoute(route.path)">
-          <v-list-item-icon>
+          <v-list-item-icon class="text--text">
             <Icon width="25" :icon="route.icon" />
           </v-list-item-icon>
 
-          <v-list-item-title class="pl-3 link" v-if="mdAndUp">
+          <v-list-item-title class="pl-3 link text--text" v-if="mdAndUp">
             {{ route.name }}</v-list-item-title
           >
         </div>
@@ -83,9 +83,6 @@ export default {
 </script>
 
 <style scoped>
-.max-width {
-  max-width: 230px !important;
-}
 .link {
   padding-top: 5px;
   padding-bottom: 5px;

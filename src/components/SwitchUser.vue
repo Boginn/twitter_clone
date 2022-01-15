@@ -1,14 +1,24 @@
 <template>
   <v-card class="secondary br-15 mb-3">
     <v-card-text class="pb-0 pt-2">
-      <v-select
-        :items="users"
-        :item-text="'name'"
-        :item-value="'id'"
-        label="Switch User"
-        v-on:change="setUser"
-      ></v-select
-    ></v-card-text>
+      <v-row>
+        <v-col cols="10">
+          <v-select
+            :items="users"
+            :item-text="'name'"
+            :item-value="'id'"
+            label="Switch User"
+            v-on:change="setUser"
+          ></v-select>
+        </v-col>
+        <v-col class="text--text">
+          <span class="text--text">
+            {{ currentTheme }}
+          </span>
+          <v-switch color="primary" v-model="$vuetify.theme.dark"></v-switch>
+        </v-col>
+      </v-row>
+    </v-card-text>
   </v-card>
 </template>
 
@@ -19,10 +29,16 @@ export default {
   mounted() {
     this.setUsers();
   },
-
+  //@click="$vuetify.theme.dark = !$vuetify.theme.dark"
   computed: {
     users() {
       return this.$store.getters.users;
+    },
+    currentTheme() {
+      return this.$vuetify.theme.dark ? 'Dark' : 'Light';
+    },
+    dark() {
+      return this.$vuetify.theme.dark;
     },
   },
   methods: {
@@ -40,3 +56,9 @@ export default {
   },
 };
 </script>
+
+<style scoped>
+.st {
+  color: #fdfdfb;
+}
+</style>

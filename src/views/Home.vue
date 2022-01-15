@@ -14,27 +14,30 @@
           class="border-bottom font-11 white--text d-flex align-start"
         >
           <v-col cols="1" class="pl-2">
-            <v-avatar :color="getUserById(t.userId).color" :size="avatarSize">{{
-              getUserById(t.userId).name.toUpperCase().substring(0, 1)
-            }}</v-avatar>
+            <router-link :to="`/user/${t.userId}`" class="text--text">
+              <v-avatar
+                :color="getUserById(t.userId).color"
+                :size="avatarSize"
+                >{{
+                  getUserById(t.userId).name.toUpperCase().substring(0, 1)
+                }}</v-avatar
+              >
+            </router-link>
           </v-col>
           <v-col>
-            <div @click="$router.push(`/tweet/${t.id}`)">
+            <div>
               <div>
-                <b>
-                  {{ getUserById(t.userId).name }}
-                </b>
-                <span class="grey--text">
-                  {{ getUserById(t.userId).handle }} -
-                  <!-- <TimeAgo
-                    :since="t.date"
-                    :auto-update="60"
-                    :format="formatTime"
-                  ></TimeAgo> -->
-                  <span> {{ formatDate(t.date) }} </span>
-                </span>
+                <router-link :to="`/user/${t.userId}`">
+                  <b class="text--text">
+                    {{ getUserById(t.userId).name }}
+                  </b>
+                  <span class="grey--text">
+                    {{ getUserById(t.userId).handle }} -
+                  </span>
+                </router-link>
+                <span class="grey--text"> {{ formatDate(t.date) }} </span>
               </div>
-              <div>
+              <div class="text--text" @click="$router.push(`/tweet/${t.id}`)">
                 {{ t.content }}
                 <span v-if="t.hashtag" class="blue--text">
                   &#35;{{ t.hashtag }}
@@ -108,6 +111,7 @@ export default {
   },
 
   mounted() {
+    this.setFollows();
     this.setUsers();
     this.setTweets();
   },
@@ -142,6 +146,14 @@ export default {
       return breakpoints.iconSize(this.$vuetify.breakpoint.name);
     },
 
+    //
+    followers() {
+      return this.follows.filter((f) => f.userId == this.user.id);
+    },
+    following() {
+      return this.follows.filter((f) => f.followerId == this.user.id);
+    },
+
     //state
     user() {
       return this.users.filter(
@@ -152,7 +164,22 @@ export default {
       return this.$store.getters.users;
     },
     tweets() {
-      return this.$store.getters.tweets;
+      const tweets = this.$store.getters.tweets;
+      let result = [];
+
+      tweets.forEach((tweet) => {
+        this.following.forEach((entry) => {
+          console.log(entry);
+          if (entry.userId == tweet.userId) {
+            result.push(tweet);
+          }
+        });
+      });
+
+      return result;
+    },
+    follows() {
+      return this.$store.getters.follows;
     },
   },
 
@@ -174,6 +201,12 @@ export default {
       this.axios.get('https://localhost:44343/api/tweets').then((ret) => {
         //  console.log(ret);
         this.$store.dispatch('setTweets', ret.data);
+      });
+    },
+    setFollows() {
+      this.axios.get('https://localhost:44343/api/follows').then((ret) => {
+        console.log(ret.data);
+        this.$store.dispatch('setFollows', ret.data);
       });
     },
 

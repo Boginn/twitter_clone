@@ -2,12 +2,11 @@
   <v-container class="pa-0">
     <v-row class="border-bottom font-11">
       <v-col cols="1" class="pl-4 highlight">
-        <v-avatar
-          class="ml-2 mt-4 white--text"
-          :color="user.color"
-          :size="avatarSize"
-          >{{ user.name.substring(0, 1) }}</v-avatar
-        >
+        <router-link :to="`/user/${this.user.id}`" class="text--text">
+          <v-avatar class="ml-2 mt-4" :color="user.color" :size="avatarSize">{{
+            user.name.substring(0, 1)
+          }}</v-avatar>
+        </router-link>
       </v-col>
       <v-col class="ml-4">
         <div class="grey--text mb-1">
@@ -16,6 +15,8 @@
             :rules="rules.post"
             placeholder="What's Happening?"
             hide-details="auto"
+            @keydown.enter="submit"
+            @keydown.esc="post = ``"
           ></v-text-field>
         </div>
         <div class="blue--text border-bottom pb-2 d-flex align-center">
@@ -36,6 +37,7 @@
               small
               rounded
               class="btn primary no-transform stretch pa-4"
+              name="Tweet"
               >Tweet</v-btn
             >
           </v-col>
@@ -83,32 +85,34 @@ export default {
 
   methods: {
     submit() {
-      let post,
-        hashtag,
-        hashtags = this.getHashTags(this.post);
+      if (this.validate) {
+        let post,
+          hashtag,
+          hashtags = this.getHashTags(this.post);
 
-      if (hashtags != null) {
-        hashtag = hashtags[0];
-        post = this.post.split(hashtag).join('');
+        if (hashtags != null) {
+          hashtag = hashtags[0];
+          post = this.post.split(hashtag).join('');
 
-        hashtag = hashtag.substring(2);
-      } else {
-        post = this.post;
-        hashtag = '';
+          hashtag = hashtag.substring(2);
+        } else {
+          post = this.post;
+          hashtag = '';
+        }
+
+        this.axios
+          .post('https://localhost:44343/api/tweets/create', {
+            content: post,
+            hashtag: hashtag,
+            date: new Date(),
+            userId: this.user.id,
+          })
+          .then((ret) => {
+            this.$emit('change');
+            this.$emit('done');
+            console.log(ret);
+          });
       }
-
-      this.axios
-        .post('https://localhost:44343/api/tweets/create', {
-          content: post,
-          hashtag: hashtag,
-          date: new Date(),
-          userId: this.user.id,
-        })
-        .then((ret) => {
-          this.$emit('change');
-          this.$emit('done');
-          console.log(ret);
-        });
     },
 
     getHashTags(inputText) {

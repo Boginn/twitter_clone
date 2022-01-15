@@ -15,8 +15,6 @@ export default {
     var day = split[1];
     var year = split[2];
 
-    var result = `${month} ${day}, ${year}`;
-
     if (minutes < 1) {
       return `just now`;
     } else if (minutes < 60) {
@@ -26,7 +24,7 @@ export default {
     } else if (days < 60) {
       return `${days}d`;
     } else {
-      return result;
+      return `${month} ${day}, ${year}`;
     }
   },
   getMonth(str) {

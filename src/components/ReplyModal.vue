@@ -1,6 +1,6 @@
 <template>
   <v-dialog v-if="post.id == selectedPost.id" v-model="modal" max-width="520">
-    <v-card class="black br-15">
+    <v-card class="bgcolor br-15">
       <v-row>
         <v-col cols="1" class="pl-2">
           <v-avatar

@@ -1,6 +1,6 @@
 <template>
   <v-dialog v-model="modal" max-width="520">
-    <v-card class="black br-15">
+    <v-card class="bgcolor br-15">
       <Post :user="user" @done="$emit('done')" />
     </v-card>
   </v-dialog>

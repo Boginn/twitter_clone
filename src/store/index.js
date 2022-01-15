@@ -11,6 +11,7 @@ export default new Vuex.Store({
     users: undefined,
     tweets: undefined,
     replies: undefined,
+    follows: undefined,
   },
   getters: {
     isDeveloper(state) {
@@ -31,6 +32,9 @@ export default new Vuex.Store({
     replies(state) {
       return state.replies;
     },
+    follows(state) {
+      return state.follows;
+    },
   },
   actions: {
     toggleIsDeveloper(context) {
@@ -48,6 +52,9 @@ export default new Vuex.Store({
     setReplies(context, payload) {
       context.commit('SET_REPLIES', payload);
     },
+    setFollows(context, payload) {
+      context.commit('SET_FOLLOWS', payload);
+    },
   },
   mutations: {
     TOGGLE_IS_DEVELOPER(state) {
@@ -64,6 +71,9 @@ export default new Vuex.Store({
     },
     SET_REPLIES(state, payload) {
       state.replies = payload;
+    },
+    SET_FOLLOWS(state, payload) {
+      state.follows = payload;
     },
   },
 });

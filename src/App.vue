@@ -3,10 +3,14 @@
     <v-app-bar
       v-if="lgAndUp"
       app
-      dark
-      class="border-left"
-      style="background-color: #00000081"
+      elevation="0"
+      class="border-left abDark"
+      style="background-color: '#000000'"
       height="50"
+      v-bind:class="{
+        abDark: $vuetify.theme.dark,
+        abLight: !$vuetify.theme.dark,
+      }"
     >
       <v-col
         cols="5"
@@ -54,12 +58,12 @@
       floating
       permanent
       :width="navbarWidth"
-      class="black"
+      class="bgcolor"
     >
       <Navigation :routes="routes" />
     </v-navigation-drawer>
 
-    <v-main class="black d-flex">
+    <v-main class="bgcolor">
       <Main />
     </v-main>
   </v-app>
@@ -85,6 +89,14 @@ export default {
   data: () => ({
     searchString: '',
     isUpdating: false,
+
+    appbarColor: {
+      backgroundColor: '#00000081',
+      color: 'red',
+    },
+    abDark: {
+      backgroundColor: '#FFFFFF81',
+    },
   }),
 
   watch: {
@@ -146,6 +158,13 @@ export default {
 </script>
 
 <style>
+/* */
+.abDark {
+  background-color: #00000080 !important;
+}
+.abLight {
+  background-color: #ffffff80 !important;
+}
 /* helpers */
 .stay {
   position: fixed !important;
@@ -163,7 +182,7 @@ export default {
   cursor: pointer !important;
 }
 .opacity {
-  opacity: 0.5 !important;
+  opacity: 0.7 !important;
 }
 /* .code {
   font-family: 'Courier New', Courier, monospace;

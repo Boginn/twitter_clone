@@ -124,6 +124,28 @@ const options = {
   },
 };
 
+const colors = [
+  'red',
+  'pink',
+  'purple',
+  'deep-purple',
+  'indigo',
+  'blue',
+  'light-blue',
+  'cyan',
+  'teal',
+  'green',
+  'light-green',
+  'lime',
+  'yellow',
+  'amber',
+  'orange',
+  'deep-orange',
+  'brown',
+  'blue-grey',
+  'grey',
+];
+
 const more = {
   trending: [
     { value: 'Not interested in this' },
@@ -152,6 +174,7 @@ const rules = {
 export default {
   routes,
   options,
+  colors,
   more,
   rules,
 };

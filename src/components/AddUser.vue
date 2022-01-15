@@ -1,50 +1,109 @@
 <template>
-  <v-card class="secondary br-15 mb-3">
-    <v-card-title class="pb-1 pt-2 grey--text">Add User</v-card-title>
-    <v-divider></v-divider>
+  <v-card class="secondary br-15 mb-3 pa-3">
+    <v-card-title class="text-body-1 pb-1 pt-2 grey--text"
+      >Add User</v-card-title
+    >
     <v-card-text class="pt-0">
       <v-form ref="form" v-model="valid" lazy-validation>
-        <v-text-field
-          v-model="name"
-          :rules="nameRules"
-          label="Name"
-          required
-        ></v-text-field>
+        <v-row>
+          <v-col class="pa-0 pr-2">
+            <v-text-field
+              v-model="name"
+              :rules="nameRules"
+              label="Name"
+              required
+            >
+            </v-text-field>
+          </v-col>
+          <v-col class="pa-0 pl-2">
+            <v-text-field
+              v-model="handle"
+              :rules="handleRules"
+              label="@"
+              required
+            >
+            </v-text-field>
+          </v-col>
+        </v-row>
+        <v-row>
+          <v-select
+            v-model="color"
+            :items="colors"
+            :rules="[(v) => !!v || 'Color is required']"
+            label="Color"
+            required
+          ></v-select>
+        </v-row>
+        <v-row class="d-flex justify-center">
+          <v-dialog v-model="dialog" width="500">
+            <template v-slot:activator="{ on, attrs }">
+              <v-btn
+                outlined
+                :disabled="!valid"
+                color="success"
+                class="mr-4"
+                v-bind="attrs"
+                v-on="on"
+                >Add</v-btn
+              >
 
-        <v-text-field
-          v-model="handle"
-          :rules="handleRules"
-          label="Handle"
-          required
-        ></v-text-field>
+              <v-btn
+                outlined
+                color="primary"
+                class="mr-4"
+                @click="$refs.form.reset()"
+                >Reset</v-btn
+              >
+            </template>
 
-        <v-select
-          v-model="color"
-          :items="colors"
-          :rules="[(v) => !!v || 'Color is required']"
-          label="Color"
-          required
-        ></v-select>
-        <div class="d-flex justify-center">
-          <v-btn
-            outlined
-            :disabled="!valid"
-            color="success"
-            class="mr-4"
-            @click="validate"
-            >Add</v-btn
-          >
+            <v-card v-if="!done">
+              <v-card-title class="text-h5 lighten-2">
+                Are you sure you want to add
+                <span class="primary--text">&nbsp;{{ name }} </span>?
+              </v-card-title>
+              <v-divider></v-divider>
 
-          <v-btn outlined color="primary" class="mr-4" @click="reset"
-            >Reset</v-btn
-          >
-        </div>
+              <v-card-text class="mt-2" v-if="name">
+                <v-avatar :color="color" :size="avatarSize">{{
+                  name.toUpperCase().substring(0, 1)
+                }}</v-avatar>
+                <span class="ml-2">@{{ handle }}</span>
+              </v-card-text>
+
+              <v-divider></v-divider>
+
+              <v-card-actions>
+                <v-spacer></v-spacer>
+                <v-btn color="primary" text @click="dialog = false">
+                  Cancel
+                </v-btn>
+                <v-btn color="primary" text @click="validate"> Proceed </v-btn>
+              </v-card-actions>
+            </v-card>
+
+            <v-card v-else>
+              <v-card-title class="text-h5 lighten-2"> Success. </v-card-title>
+              <v-divider></v-divider>
+
+              <v-card-text class="mt-2"> User has been added. </v-card-text>
+
+              <v-divider></v-divider>
+
+              <v-card-actions>
+                <v-btn color="primary" text @click="reset"> Ok </v-btn>
+              </v-card-actions>
+            </v-card>
+          </v-dialog>
+        </v-row>
       </v-form>
     </v-card-text>
   </v-card>
 </template>
 
 <script>
+import data from '@/data/data.js';
+import breakpoints from '@/data/breakpoints.js';
+
 export default {
   name: 'AddUser',
 
@@ -65,22 +124,24 @@ export default {
       (v) => (v && v.length <= 11) || 'Name must be less than 11 characters',
     ],
     color: null,
-    colors: ['blue', 'red', 'yellow', 'green'],
     checkbox: false,
+    dialog: false,
+    done: false,
   }),
 
   computed: {
     users() {
       return this.$store.getters.users;
     },
+    colors() {
+      return data.colors;
+    },
+    avatarSize() {
+      return breakpoints.avatarSize(this.$vuetify.breakpoint.name);
+    },
   },
 
   methods: {
-    // setUser(id) {
-    //   this.setUsers();
-    //   this.$store.dispatch('setLoggedUserId', id);
-    //   console.log(this.users);
-    // },
     setUsers() {
       this.axios.get('https://localhost:44343/api/users').then((ret) => {
         console.log(ret);
@@ -96,8 +157,10 @@ export default {
         })
         .then((ret) => {
           console.log(ret);
+
+          this.done = true;
           this.setUsers();
-          // this.$store.dispatch('setUsers', ret.data);
+          this.$refs.form.reset();
         });
     },
 
@@ -108,7 +171,8 @@ export default {
       }
     },
     reset() {
-      this.$refs.form.reset();
+      this.dialog = false;
+      this.done = false;
     },
   },
 };

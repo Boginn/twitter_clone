@@ -1,6 +1,6 @@
 <template>
   <v-row class="pl-1">
-    <v-col cols="1" class="pl-2">
+    <v-col cols="1" class="pl-2 text--text">
       <v-avatar :color="user.color" :size="avatarSize">{{
         user.name.substring(0, 1)
       }}</v-avatar>
@@ -17,6 +17,8 @@
           :rules="rules.reply"
           placeholder="Tweet your reply"
           hide-details="auto"
+          @keydown.enter="submit"
+          @keydown.esc="reply = ``"
         ></v-text-field>
       </div>
 

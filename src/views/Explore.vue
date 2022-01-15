@@ -1,11 +1,11 @@
 <template>
-  <v-container class="pa-0">
+  <v-container class="pa-0" v-if="ready">
     <v-list class="ma-0 pa-0 transparent">
-      <div v-for="r in replies.slice().reverse()" :key="r.id">
+      <div v-for="t in tweets.slice().reverse()" :key="t.id">
         <ReplyModal
           v-if="selectedTweet"
           :selectedPost="selectedTweet"
-          :post="r"
+          :post="t"
           @done="selectedTweet = undefined"
         />
         <v-list-item
@@ -13,12 +13,12 @@
           class="border-bottom font-11 white--text d-flex align-start"
         >
           <v-col cols="1" class="pl-2">
-            <router-link :to="`/user/${r.userId}`">
+            <router-link :to="`/user/${t.userId}`" class="text--text">
               <v-avatar
-                :color="getUserById(r.userId).color"
+                :color="getUserById(t.userId).color"
                 :size="avatarSize"
                 >{{
-                  getUserById(r.userId).name.toUpperCase().substring(0, 1)
+                  getUserById(t.userId).name.toUpperCase().substring(0, 1)
                 }}</v-avatar
               >
             </router-link>
@@ -26,56 +26,51 @@
           <v-col>
             <div>
               <div>
-                <router-link :to="`/user/${r.userId}`">
+                <router-link :to="`/user/${t.userId}`">
                   <b class="text--text">
-                    {{ getUserById(r.userId).name }}
+                    {{ getUserById(t.userId).name }}
                   </b>
                   <span class="grey--text">
-                    {{ getUserById(r.userId).handle }} -
+                    {{ getUserById(t.userId).handle }} -
                   </span>
                 </router-link>
-                <span class="grey--text">
-                  {{ formatDate(r.date) }}
-                </span>
+                <span class="grey--text"> {{ formatDate(t.date) }} </span>
               </div>
-              <div class="grey--text">
-                <span v-if="getUserById(tweet.userId)">
-                  replying to
-                  <span class="blue--text" v-if="r.recipient">
-                    {{ r.recipient }}
-                  </span>
-                  <span class="blue--text" v-else>
-                    {{ getUserById(tweet.userId).handle }}</span
-                  >
+              <div class="text--text" @click="$router.push(`/tweet/${t.id}`)">
+                {{ t.content }}
+                <span v-if="t.hashtag" class="blue--text">
+                  &#35;{{ t.hashtag }}
                 </span>
-              </div>
-              <div class="text--text">
-                {{ r.content }}
               </div>
             </div>
             <v-row>
               <v-col v-for="i in options.tweet.icons" :key="i.name">
                 <v-chip
                   class="transparent highlight"
-                  @click="interact(r, i.name)"
+                  @click="interact(t, i.name)"
                 >
                   <span
                     v-if="i.name == 'Like'"
                     v-bind:class="{
-                      'red--text': hasLiked(r),
+                      'red--text': hasLiked(t),
                     }"
                   >
                     <Icon
                       :width="iconSize"
                       :icon="i.iconAlternative"
-                      v-if="hasLiked(r)"
+                      v-if="hasLiked(t)"
                     />
 
                     <Icon :width="iconSize" :icon="i.icon" v-else />
                   </span>
+
                   <Icon :width="iconSize" :icon="i.icon" v-else />
+
                   <span v-if="i.name == 'Like'" class="ml-1">
-                    {{ r.replyLikes.length }}
+                    {{ t.tweetLikes.length }}
+                  </span>
+                  <span v-if="i.name == 'Reply'" class="ml-1">
+                    {{ t.replies.length }}
                   </span>
                 </v-chip>
               </v-col>
@@ -83,10 +78,10 @@
           </v-col>
           <v-col cols="1" class="mr-3">
             <Options
-              :options="more(r)"
+              :options="more(t)"
               :width="20"
               @option="selectOption"
-              @interact="interact(r, selectedOption)"
+              @interact="interact(t, selectedOption)"
             />
           </v-col>
         </v-list-item>
@@ -99,48 +94,52 @@
 import { Icon } from '@iconify/vue2';
 import data from '@/data/data.js';
 import helpers from '@/services/helpers.js';
+
 import breakpoints from '@/data/breakpoints.js';
 
 export default {
-  name: 'TweetReplies',
+  name: 'Explore',
 
   components: {
     Icon,
     Options: () => import('@/components/Options.vue'),
     ReplyModal: () => import('@/components/ReplyModal.vue'),
+    // TimeAgo,
   },
 
   mounted() {
-    // this.setUsers();
+    this.setUsers();
+    this.setTweets();
   },
-
-  props: {
-    tweet: Object,
-  },
-
-  data: () => ({ selectedTweet: undefined, selectedOption: undefined }),
 
   watch: {
-    replies() {
-      this.setReplies();
+    tweets() {
+      // this.setTweets();
+    },
+    users() {
+      // this.setUsers();
     },
   },
 
+  data: () => ({
+    selectedOption: undefined,
+    selectedTweet: undefined,
+    // modal: false,
+  }),
+
   computed: {
+    ready() {
+      return this.tweets && this.users ? true : false;
+    },
     options() {
       return data.options;
     },
 
-    //eval
     avatarSize() {
       return breakpoints.avatarSize(this.$vuetify.breakpoint.name);
     },
     iconSize() {
       return breakpoints.iconSize(this.$vuetify.breakpoint.name);
-    },
-
-    validate() {
-      return helpers.validateLength(this.post);
     },
 
     //state
@@ -152,27 +151,32 @@ export default {
     users() {
       return this.$store.getters.users;
     },
-    replies() {
-      return this.$store.getters.replies.filter(
-        (x) => x.tweetId == this.tweet.id
-      );
+    tweets() {
+      return this.$store.getters.tweets;
     },
   },
 
   methods: {
-    more(r) {
-      if (r.userId == this.user.id) {
+    more(t) {
+      if (t.userId == this.user.id) {
         return data.more.ownedTweet;
       } else {
         return data.more.tweet;
       }
     },
-    setReplies() {
-      this.axios.get('https://localhost:44343/api/replies').then((ret) => {
+    setUsers() {
+      this.axios.get('https://localhost:44343/api/users').then((ret) => {
         console.log(ret);
-        this.$store.dispatch('setReplies', ret.data);
+        this.$store.dispatch('setUsers', ret.data);
       });
     },
+    setTweets() {
+      this.axios.get('https://localhost:44343/api/tweets').then((ret) => {
+        //  console.log(ret);
+        this.$store.dispatch('setTweets', ret.data);
+      });
+    },
+
     getUserById(id) {
       return this.users.filter((user) => user.id == id)[0];
     },
@@ -181,39 +185,34 @@ export default {
       this.selectedOption = o;
     },
 
-    interact(reply, option) {
+    interact(tweet, option) {
       if (option == 'Like') {
         this.axios
-          .put(
-            `https://localhost:44343/api/replies/like/${reply.id}`,
-            this.user
-          )
+          .put(`https://localhost:44343/api/tweets/like/${tweet.id}`, this.user)
           .then((ret) => {
             console.log(ret);
-            this.setReplies();
+            this.setTweets();
           });
       }
       if (option == 'Delete') {
+        console.log(tweet);
         this.axios
-          .delete(`https://localhost:44343/api/replies/delete/${reply.id}`)
+          .delete(`https://localhost:44343/api/tweets/delete/${tweet.id}`)
           .then((ret) => {
             console.log(ret);
-            this.setReplies();
+            this.setTweets();
           });
       }
       if (option == 'Reply') {
-        this.selectedTweet = reply;
+        this.selectedTweet = tweet;
+        // this.modal = true;
       }
     },
 
-    formatDate(date) {
-      return helpers.formatDate(date);
-    },
-
-    hasLiked(reply) {
+    hasLiked(tweet) {
       let res;
 
-      reply.replyLikes.forEach((entry) => {
+      tweet.tweetLikes.forEach((entry) => {
         // console.log(entry.userId, this.user.id);
         if (entry.userId == this.user.id) {
           // console.log('true');
@@ -223,6 +222,10 @@ export default {
         }
       });
       return res;
+    },
+
+    formatDate(date) {
+      return helpers.formatDate(date);
     },
   },
 };

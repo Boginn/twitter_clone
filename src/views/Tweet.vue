@@ -1,26 +1,30 @@
 <template>
   <v-container class="pa-0" v-if="ready">
-    <div class="border-bottom font-11 white--text">
+    <div class="border-bottom font-11">
       <v-container class="">
         <v-row>
-          <v-col cols="1" class="pl-0">
-            <v-avatar
-              :color="getUserById(tweet.userId).color"
-              :size="avatarSize"
-              >{{ getUserById(tweet.userId).name.substring(0, 1) }}</v-avatar
-            >
+          <v-col cols="1" class="pl-0 white--text">
+            <router-link :to="`/user/${tweet.userId}`" class="text--text">
+              <v-avatar
+                :color="getUserById(tweet.userId).color"
+                :size="avatarSize"
+                >{{ getUserById(tweet.userId).name.substring(0, 1) }}</v-avatar
+              >
+            </router-link>
           </v-col>
           <v-col>
-            <v-row>
-              <strong>
-                {{ getUserById(tweet.userId).name }}
-              </strong>
-            </v-row>
-            <v-row>
-              <div class="grey--text text-subtitle-2">
-                {{ getUserById(tweet.userId).handle }}
-              </div>
-            </v-row>
+            <router-link :to="`/user/${tweet.userId}`" class="text--text">
+              <v-row>
+                <strong class="text--text">
+                  {{ getUserById(tweet.userId).name }}
+                </strong>
+              </v-row>
+              <v-row>
+                <div class="grey--text text-subtitle-2">
+                  {{ getUserById(tweet.userId).handle }}
+                </div>
+              </v-row>
+            </router-link>
           </v-col>
 
           <v-col cols="1" class="mr-3">
@@ -33,20 +37,23 @@
           </v-col>
         </v-row>
 
-        <v-row class="text-h6 pb-3 pl-1">
+        <v-row class="text-h6 pb-3 pl-1 text--text">
           {{ tweet.content }}
           <span v-if="tweet.hashtag" class="blue--text">
             &#35;{{ tweet.hashtag }}
           </span></v-row
         >
         <v-row class="pb-3 pt-3 pl-1">
-          <div class="grey--text">{{ formatDate(tweet.date) }}</div>
+          <div class="grey--text">
+            {{ formatDate(tweet.date) }}
+            <span v-if="formatDate(tweet.date).length < 8">ago</span>
+          </div>
         </v-row>
         <v-divider></v-divider>
         <v-row class="pb-3 pt-3 pl-1">
           <div class="grey--text">
-            <span class="white--text">1</span> Retweet
-            <span class="white--text ml-6">{{ tweet.tweetLikes.length }}</span>
+            <span class="text--text">0</span> Retweet
+            <span class="text--text ml-6">{{ tweet.tweetLikes.length }}</span>
             Likes
           </div>
         </v-row>
