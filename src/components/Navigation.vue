@@ -21,8 +21,9 @@
         class="br-15 link"
         v-for="route in routes"
         :key="route.name"
+        @click="pushRoute(route.path)"
       >
-        <div class="d-flex align-center" @click="pushRoute(route.path)">
+        <div class="d-flex align-center">
           <v-list-item-icon class="text--text">
             <Icon width="25" :icon="route.icon" />
           </v-list-item-icon>

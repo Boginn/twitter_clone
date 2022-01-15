@@ -15,12 +15,42 @@ const routes = [
     component: () => import('../views/Explore.vue'),
   },
   {
+    path: '/notifications',
+    name: 'Notifications',
+    component: () => import('../views/Explore.vue'),
+  },
+  {
+    path: '/messages',
+    name: 'messages',
+    component: () => import('../views/Explore.vue'),
+  },
+  {
+    path: '/bookmarks',
+    name: 'Bookmarks',
+    component: () => import('../views/Explore.vue'),
+  },
+  {
+    path: '/lists',
+    name: 'Lists',
+    component: () => import('../views/Explore.vue'),
+  },
+  {
+    path: '/profile',
+    name: 'Profile',
+    component: () => import('../views/Explore.vue'),
+  },
+  {
+    path: '/more',
+    name: 'More',
+    component: () => import('../views/Explore.vue'),
+  },
+  {
     path: '/tweet/:id',
     name: 'Tweet',
     component: () => import('../views/Tweet.vue'),
   },
   {
-    path: '/user/:id',
+    path: '/:handle',
     name: 'User',
     component: () => import('../views/User.vue'),
   },

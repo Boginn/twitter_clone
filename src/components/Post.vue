@@ -2,7 +2,10 @@
   <v-container class="pa-0">
     <v-row class="border-bottom font-11">
       <v-col cols="1" class="pl-4 highlight">
-        <router-link :to="`/user/${this.user.id}`" class="text--text">
+        <router-link
+          :to="`/${getUserById(this.user.id).handle.substring(1)}`"
+          class="text--text"
+        >
           <v-avatar class="ml-2 mt-4" :color="user.color" :size="avatarSize">{{
             user.name.substring(0, 1)
           }}</v-avatar>
@@ -81,6 +84,11 @@ export default {
     validate() {
       return helpers.validateLength(this.post);
     },
+
+    //state
+    users() {
+      return this.$store.getters.users;
+    },
   },
 
   methods: {
@@ -113,6 +121,10 @@ export default {
             console.log(ret);
           });
       }
+    },
+
+    getUserById(id) {
+      return this.users.filter((u) => u.id == id)[0];
     },
 
     getHashTags(inputText) {

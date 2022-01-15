@@ -13,7 +13,7 @@
           class="border-bottom font-11 white--text d-flex align-start"
         >
           <v-col cols="1" class="pl-2">
-            <router-link :to="`/user/${r.userId}`">
+            <router-link :to="`/${getUserById(r.userId).handle.substring(1)}`">
               <v-avatar
                 :color="getUserById(r.userId).color"
                 :size="avatarSize"
@@ -26,7 +26,9 @@
           <v-col>
             <div>
               <div>
-                <router-link :to="`/user/${r.userId}`">
+                <router-link
+                  :to="`/${getUserById(r.userId).handle.substring(1)}`"
+                >
                   <b class="text--text">
                     {{ getUserById(r.userId).name }}
                   </b>

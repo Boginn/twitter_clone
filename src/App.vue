@@ -84,6 +84,7 @@ export default {
     this.setUsers();
     this.setTweets();
     this.setReplies();
+    this.setFollows();
   },
 
   data: () => ({
@@ -151,6 +152,12 @@ export default {
       this.axios.get('https://localhost:44343/api/replies').then((ret) => {
         console.log(ret);
         this.$store.dispatch('setReplies', ret.data);
+      });
+    },
+    setFollows() {
+      this.axios.get('https://localhost:44343/api/follows').then((ret) => {
+        console.log(ret.data);
+        this.$store.dispatch('setFollows', ret.data);
       });
     },
   },

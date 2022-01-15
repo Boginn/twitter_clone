@@ -1,0 +1,280 @@
+<template>
+  <v-list class="ma-0 pa-0 transparent" v-if="ready">
+    <div v-for="t in tweets.slice().reverse()" :key="t.id">
+      <ReplyModal
+        v-if="selectedTweet"
+        :selectedPost="selectedTweet"
+        :post="t"
+        @done="selectedTweet = undefined"
+      />
+      <v-list-item
+        link
+        class="border-bottom font-11 white--text d-flex align-start"
+      >
+        <v-col cols="1" class="pl-2">
+          <router-link
+            :to="`/${getUserById(t.userId).handle.substring(1)}`"
+            class="text--text"
+          >
+            <v-avatar :color="getUserById(t.userId).color" :size="avatarSize">{{
+              getUserById(t.userId).name.toUpperCase().substring(0, 1)
+            }}</v-avatar>
+          </router-link>
+        </v-col>
+        <v-col>
+          <div>
+            <div>
+              <router-link
+                :to="`/${getUserById(t.userId).handle.substring(1)}`"
+              >
+                <b class="text--text">
+                  {{ getUserById(t.userId).name }}
+                </b>
+                <span class="grey--text">
+                  {{ getUserById(t.userId).handle }} -
+                </span>
+              </router-link>
+              <span class="grey--text"> {{ formatDate(t.date) }} </span>
+            </div>
+            <div class="grey--text">
+              <span v-if="t.recipient">
+                replying to
+                <span class="blue--text"> {{ t.recipient }}</span>
+              </span>
+            </div>
+            <div class="text--text" @click="$router.push(`/tweet/${t.id}`)">
+              {{ t.content }}
+              <span v-if="t.hashtag" class="blue--text">
+                &#35;{{ t.hashtag }}
+              </span>
+            </div>
+          </div>
+          <v-row>
+            <v-col v-for="i in options.tweet.icons" :key="i.name">
+              <v-chip
+                class="transparent highlight"
+                @click="interact(t, i.name)"
+              >
+                <span
+                  v-if="i.name == 'Like'"
+                  v-bind:class="{
+                    'red--text': hasLiked(t),
+                  }"
+                >
+                  <Icon
+                    :width="iconSize"
+                    :icon="i.iconAlternative"
+                    v-if="hasLiked(t)"
+                  />
+
+                  <Icon :width="iconSize" :icon="i.icon" v-else />
+                </span>
+
+                <Icon :width="iconSize" :icon="i.icon" v-else />
+
+                <span v-if="i.name == 'Like'" class="ml-1">
+                  <span v-if="t.tweetLikes">
+                    {{ t.tweetLikes.length }}
+                  </span>
+                  <span v-if="t.replyLikes">
+                    {{ t.replyLikes.length }}
+                  </span>
+                </span>
+                <span v-if="i.name == 'Reply'" class="ml-1">
+                  <span v-if="t.replies">
+                    {{ t.replies.length }}
+                  </span>
+                </span>
+              </v-chip>
+            </v-col>
+          </v-row>
+        </v-col>
+        <v-col cols="1" class="mr-3">
+          <Options
+            :options="more(t)"
+            :width="20"
+            @option="selectOption"
+            @interact="interact(t, selectedOption)"
+          />
+        </v-col>
+      </v-list-item>
+    </div>
+  </v-list>
+</template>
+
+<script>
+import { Icon } from '@iconify/vue2';
+import data from '@/data/data.js';
+import helpers from '@/services/helpers.js';
+
+import breakpoints from '@/data/breakpoints.js';
+
+export default {
+  name: 'Feed',
+
+  components: {
+    Icon,
+    Options: () => import('@/components/Options.vue'),
+    ReplyModal: () => import('@/components/ReplyModal.vue'),
+    // TimeAgo,
+  },
+
+  props: {
+    tweets: Array,
+  },
+
+  mounted() {
+    this.setUsers();
+    this.setTweets();
+    this.setReplies();
+  },
+
+  watch: {
+    tweets() {},
+    users() {},
+    replies() {},
+  },
+
+  data: () => ({
+    selectedOption: undefined,
+    selectedTweet: undefined,
+    // modal: false,
+  }),
+
+  computed: {
+    ready() {
+      return this.tweets && this.users ? true : false;
+    },
+    options() {
+      return data.options;
+    },
+
+    avatarSize() {
+      return breakpoints.avatarSize(this.$vuetify.breakpoint.name);
+    },
+    iconSize() {
+      return breakpoints.iconSize(this.$vuetify.breakpoint.name);
+    },
+
+    //state
+    user() {
+      return this.users.filter(
+        (user) => user.id == this.$store.getters.loggedUserId
+      )[0];
+    },
+    users() {
+      return this.$store.getters.users;
+    },
+  },
+
+  methods: {
+    more(t) {
+      if (t.userId == this.user.id) {
+        return data.more.ownedTweet;
+      } else {
+        return data.more.tweet;
+      }
+    },
+    setUsers() {
+      this.axios.get('https://localhost:44343/api/users').then((ret) => {
+        console.log(ret);
+        this.$store.dispatch('setUsers', ret.data);
+      });
+    },
+    setTweets() {
+      this.axios.get('https://localhost:44343/api/tweets').then((ret) => {
+        //  console.log(ret);
+        this.$store.dispatch('setTweets', ret.data);
+      });
+    },
+    setReplies() {
+      this.axios.get('https://localhost:44343/api/replies').then((ret) => {
+        //  console.log(ret);
+        this.$store.dispatch('setReplies', ret.data);
+      });
+    },
+
+    getUserById(id) {
+      return this.users.filter((user) => user.id == id)[0];
+    },
+
+    selectOption(o) {
+      this.selectedOption = o;
+    },
+
+    interact(post, option) {
+      const isTweet = post.tweetLikes ? true : false;
+
+      if (option == 'Like') {
+        if (isTweet) {
+          this.axios
+            .put(
+              `https://localhost:44343/api/tweets/like/${post.id}`,
+              this.user
+            )
+            .then((ret) => {
+              console.log(ret);
+              this.setTweets();
+            });
+        } else {
+          this.axios
+            .put(
+              `https://localhost:44343/api/replies/like/${post.id}`,
+              this.user
+            )
+            .then((ret) => {
+              console.log(ret);
+              this.setReplies();
+            });
+        }
+
+        this.$emit('update');
+      }
+      if (option == 'Delete') {
+        console.log(post);
+        if (isTweet) {
+          this.axios
+            .delete(`https://localhost:44343/api/tweets/delete/${post.id}`)
+            .then((ret) => {
+              console.log(ret);
+              this.setTweets();
+            });
+        } else {
+          this.axios
+            .delete(`https://localhost:44343/api/replies/delete/${post.id}`)
+            .then((ret) => {
+              console.log(ret);
+              this.setReplies();
+            });
+        }
+      }
+      if (option == 'Reply') {
+        this.selectedTweet = post;
+        // this.modal = true;
+      }
+    },
+
+    hasLiked(post) {
+      let res;
+      let likes = post.tweetLikes ? post.tweetLikes : post.replyLikes;
+
+      likes.forEach((entry) => {
+        // console.log(entry.userId, this.user.id);
+        if (entry.userId == this.user.id) {
+          // console.log('true');
+          res = true;
+        } else {
+          res = false;
+        }
+      });
+      return res;
+    },
+
+    formatDate(date) {
+      return helpers.formatDate(date);
+    },
+  },
+};
+</script>
+
+<style scoped></style>

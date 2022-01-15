@@ -4,7 +4,10 @@
       <v-container class="">
         <v-row>
           <v-col cols="1" class="pl-0 white--text">
-            <router-link :to="`/user/${tweet.userId}`" class="text--text">
+            <router-link
+              :to="`/${getUserById(tweet.userId).handle.substring(1)}`"
+              class="text--text"
+            >
               <v-avatar
                 :color="getUserById(tweet.userId).color"
                 :size="avatarSize"
@@ -13,7 +16,10 @@
             </router-link>
           </v-col>
           <v-col>
-            <router-link :to="`/user/${tweet.userId}`" class="text--text">
+            <router-link
+              :to="`/${getUserById(tweet.userId).handle.substring(1)}`"
+              class="text--text"
+            >
               <v-row>
                 <strong class="text--text">
                   {{ getUserById(tweet.userId).name }}
@@ -221,6 +227,16 @@ export default {
             console.log(ret);
             this.setTweets();
             this.$router.push('/');
+          });
+      }
+      if (option == 'Follow') {
+        this.axios
+          .put(
+            `https://localhost:44343/api/users/follow/${tweet.userId}`,
+            this.user
+          )
+          .then((ret) => {
+            console.log(ret);
           });
       }
     },

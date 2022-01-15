@@ -46,9 +46,16 @@
         </v-row>
       </v-container>
     </div>
+    <v-tabs background-color="bgcolor" class="d-flex justify-center">
+      <v-tab @click="tab = tweets">Tweets</v-tab>
+      <v-tab @click="tab = tweetsReplies">Tweets & replies</v-tab>
+      <v-tab>Media</v-tab>
+      <v-tab>Likes</v-tab>
+    </v-tabs>
+
+    <Feed :tweets="tab.filter((t) => t.userId == this.subject.id)" />
   </v-container>
 </template>
-
 <script>
 import data from '@/data/data.js';
 import helpers from '@/services/helpers.js';
@@ -57,27 +64,28 @@ import breakpoints from '@/data/breakpoints.js';
 export default {
   name: 'User',
 
-  components: {},
+  components: {
+    Feed: () => import('@/components/Feed.vue'),
+  },
 
   mounted() {
-    this.setFollows();
+    this.setTweets();
     this.setSubject();
     this.setUsers();
-    this.setTweets();
-    // this.setUserById(this.$route.params.id);
+    this.setFollows();
+
+    this.setTab();
   },
 
   watch: {
-    tweets() {
-      // this.setTweets();
-      // this.setTweetById(this.$route.params.id);
-    },
+    replies() {},
   },
 
   data: () => ({
     reply: ``,
     selectedOption: undefined,
     subject: undefined,
+    tab: undefined,
   }),
 
   computed: {
@@ -102,14 +110,8 @@ export default {
 
     //eval
     hasFollowed() {
-      let res = false;
-      this.followers.forEach((entry) => {
-        console.log(entry.followerId);
-        if (entry.followerId == this.user.id) {
-          res = true;
-        }
-      });
-      return res;
+      return this.followers.filter((entry) => entry.followerId == this.user.id)
+        .length;
     },
 
     //state
@@ -123,6 +125,25 @@ export default {
     },
     tweets() {
       return this.$store.getters.tweets;
+    },
+    replies() {
+      return this.$store.getters.replies;
+    },
+    tweetsReplies() {
+      let tweetsReplies = [];
+
+      this.tweets
+        .filter((t) => t.userId == this.subject.id)
+        .forEach((t) => {
+          tweetsReplies.push(t);
+        });
+      this.replies
+        .filter((r) => r.userId == this.subject.id)
+        .forEach((r) => {
+          tweetsReplies.push(r);
+        });
+
+      return tweetsReplies;
     },
     follows() {
       return this.$store.getters.follows;
@@ -157,12 +178,22 @@ export default {
       });
     },
     setSubject() {
+      // this.axios
+      //   .get(`https://localhost:44343/api/users/${this.$route.params.id}`)
+      //   .then((ret) => {
+      //     console.log(ret);
+      //     this.subject = ret.data;
+      //   });
+      console.log(this.$route.params.handle);
       this.axios
-        .get(`https://localhost:44343/api/users/${this.$route.params.id}`)
+        .get(`https://localhost:44343/api/users/${this.$route.params.handle}`)
         .then((ret) => {
           console.log(ret);
           this.subject = ret.data;
         });
+    },
+    setTab() {
+      this.tab = this.tweets;
     },
     // setUserById(id) {
     //   this.axios.get(`https://localhost:44343/api/users/${id}`).then((ret) => {
