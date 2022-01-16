@@ -9,8 +9,8 @@
   >
     <v-container>
       <router-link class="white--text" :to="$router.currentRoute.path">
-        <v-chip
-          class="transparent pa-6 pl-4"
+        <div
+          class="transparent pa-2 pb-1 pl-4"
           v-bind:class="{
             'green--text': isDeveloper,
             'logo--text': !isDeveloper,
@@ -18,7 +18,7 @@
           @click="$store.dispatch('toggleIsDeveloper')"
         >
           <Icon width="30" icon="akar-icons:twitter-fill" />
-        </v-chip>
+        </div>
       </router-link>
 
       <v-list dense nav class="br-15">
