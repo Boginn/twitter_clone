@@ -106,17 +106,14 @@
 import { Icon } from '@iconify/vue2';
 import data from '@/data/data.js';
 import helpers from '@/services/helpers.js';
-
 import breakpoints from '@/data/breakpoints.js';
 
 export default {
   name: 'Feed',
-
   components: {
     Icon,
     Options: () => import('@/components/Options.vue'),
     ReplyModal: () => import('@/components/ReplyModal.vue'),
-    // TimeAgo,
   },
 
   props: {
@@ -158,9 +155,7 @@ export default {
 
     //state
     user() {
-      return this.users.filter(
-        (user) => user.id == this.$store.getters.loggedUserId
-      )[0];
+      return this.$store.getters.user;
     },
     users() {
       return this.$store.getters.users;
@@ -168,12 +163,8 @@ export default {
   },
 
   methods: {
-    more(t) {
-      if (t.userId == this.user.id) {
-        return data.more.ownedTweet;
-      } else {
-        return data.more.tweet;
-      }
+    getUserById(id) {
+      return this.users.filter((user) => user.id == id)[0];
     },
     setUsers() {
       this.axios.get('https://localhost:44343/api/users').then((ret) => {
@@ -194,15 +185,24 @@ export default {
       });
     },
 
-    getUserById(id) {
-      return this.users.filter((user) => user.id == id)[0];
+    more(p) {
+      /* give options depending on if the tweet belongs to the user*/
+      return p.userId == this.user.id ? data.more.ownedTweet : data.more.tweet;
     },
-
     selectOption(o) {
       this.selectedOption = o;
     },
 
+    hasLiked(post) {
+      let likes = post.tweetLikes ? post.tweetLikes : post.replyLikes;
+
+      likes.forEach((entry) => {
+        return entry.userId == this.user.id ? true : false;
+      });
+    },
+
     interact(post, option) {
+      /* check if tweet or reply*/
       const isTweet = post.tweetLikes ? true : false;
 
       if (option == 'Like') {
@@ -250,24 +250,7 @@ export default {
       }
       if (option == 'Reply') {
         this.selectedTweet = post;
-        // this.modal = true;
       }
-    },
-
-    hasLiked(post) {
-      let res;
-      let likes = post.tweetLikes ? post.tweetLikes : post.replyLikes;
-
-      likes.forEach((entry) => {
-        // console.log(entry.userId, this.user.id);
-        if (entry.userId == this.user.id) {
-          // console.log('true');
-          res = true;
-        } else {
-          res = false;
-        }
-      });
-      return res;
     },
 
     formatDate(date) {

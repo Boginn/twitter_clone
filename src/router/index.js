@@ -4,6 +4,7 @@ import VueRouter from 'vue-router';
 Vue.use(VueRouter);
 
 const routes = [
+  // Navigation
   {
     path: '/',
     name: 'Home',
@@ -21,7 +22,7 @@ const routes = [
   },
   {
     path: '/messages',
-    name: 'messages',
+    name: 'Messages',
     component: () => import('../views/Explore.vue'),
   },
   {
@@ -44,6 +45,8 @@ const routes = [
     name: 'More',
     component: () => import('../views/Explore.vue'),
   },
+
+  // Other
   {
     path: '/tweet/:id',
     name: 'Tweet',
@@ -51,8 +54,13 @@ const routes = [
   },
   {
     path: '/:handle',
-    name: 'User',
-    component: () => import('../views/User.vue'),
+    name: '',
+    component: () => import('../views/Subject.vue'),
+  },
+  {
+    path: '/:handle/:following',
+    name: '',
+    component: () => import('../views/Follows.vue'),
   },
 ];
 

@@ -24,9 +24,9 @@
 <script>
 import data from '@/data/data.js';
 import { Icon } from '@iconify/vue2';
+
 export default {
   name: 'Options',
-
   components: {
     Icon,
   },
@@ -41,7 +41,5 @@ export default {
       return data.options.generic.dots.icon;
     },
   },
-
-  methods: {},
 };
 </script>

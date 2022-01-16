@@ -90,7 +90,7 @@
       <!-- //PostReply -->
       <Reply :user="user" :post="tweet" />
     </div>
-    <TweetReplies :tweet="tweet" />
+    <Replies :tweet="tweet" />
   </v-container>
 </template>
 
@@ -102,12 +102,11 @@ import breakpoints from '@/data/breakpoints.js';
 
 export default {
   name: 'Tweet',
-
   components: {
     Icon,
     Options: () => import('@/components/Options.vue'),
     Reply: () => import('@/components/Reply.vue'),
-    TweetReplies: () => import('@/components/TweetReplies.vue'),
+    Replies: () => import('@/components/Replies.vue'),
   },
 
   data: () => ({
@@ -123,20 +122,19 @@ export default {
   },
 
   watch: {
-    tweets() {
-      // this.setTweets();
-      // this.setTweetById(this.$route.params.id);
-    },
+    tweets() {},
   },
 
   computed: {
+    //data
     options() {
       return data.options;
     },
-
     rules() {
       return data.rules;
     },
+
+    //breakpoint
     avatarSize() {
       return breakpoints.avatarSize(this.$vuetify.breakpoint.name);
     },
@@ -144,6 +142,9 @@ export default {
     //eval
     ready() {
       return this.tweet && this.users ? true : false;
+    },
+    validate() {
+      return helpers.validateLength(this.post);
     },
     hasLiked() {
       let res = false;
@@ -154,15 +155,10 @@ export default {
       });
       return res;
     },
-    validate() {
-      return helpers.validateLength(this.post);
-    },
 
     //state
     user() {
-      return this.users.filter(
-        (user) => user.id == this.$store.getters.loggedUserId
-      )[0];
+      return this.$store.getters.user;
     },
     users() {
       return this.$store.getters.users;
@@ -173,12 +169,8 @@ export default {
   },
 
   methods: {
-    more(t) {
-      if (t.userId == this.user.id) {
-        return data.more.ownedTweet;
-      } else {
-        return data.more.tweet;
-      }
+    getUserById(id) {
+      return this.users.filter((user) => user.id == id)[0];
     },
     setUsers() {
       this.axios.get('https://localhost:44343/api/users').then((ret) => {
@@ -199,10 +191,10 @@ export default {
       });
     },
 
-    getUserById(id) {
-      return this.users.filter((user) => user.id == id)[0];
+    more(p) {
+      /* give options depending on if the tweet belongs to the user*/
+      return p.userId == this.user.id ? data.more.ownedTweet : data.more.tweet;
     },
-
     selectOption(o) {
       this.selectedOption = o;
     },
@@ -243,10 +235,7 @@ export default {
 
     formatDate(date) {
       return helpers.formatDate(date);
-      // return new Date(date).toLocaleString();
     },
   },
 };
 </script>
-
-<style scoped></style>

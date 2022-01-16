@@ -29,16 +29,13 @@ export default {
   mounted() {
     this.setUsers();
   },
-  //@click="$vuetify.theme.dark = !$vuetify.theme.dark"
+
   computed: {
-    users() {
-      return this.$store.getters.users;
-    },
     currentTheme() {
       return this.$vuetify.theme.dark ? 'Dark' : 'Light';
     },
-    dark() {
-      return this.$vuetify.theme.dark;
+    users() {
+      return this.$store.getters.users;
     },
   },
   methods: {
@@ -56,9 +53,3 @@ export default {
   },
 };
 </script>
-
-<style scoped>
-.st {
-  color: #fdfdfb;
-}
-</style>

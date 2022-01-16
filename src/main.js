@@ -7,16 +7,6 @@ import store from './store';
 
 Vue.config.productionTip = false;
 
-import VueTimeago from 'vue-timeago';
-
-Vue.use(VueTimeago, {
-  name: 'Timeago', // Component name, `Timeago` by default
-  locale: undefined, // Default locale
-  locales: {
-    is: require('date-fns/locale/is'),
-  },
-});
-
 new Vue({
   router,
   vuetify,

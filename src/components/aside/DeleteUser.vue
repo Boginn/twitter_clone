@@ -79,7 +79,11 @@ export default {
       return this.$store.getters.users;
     },
   },
+
   methods: {
+    getUserById(id) {
+      return this.users.filter((user) => user.id == id)[0];
+    },
     setUsers() {
       this.axios.get('https://localhost:44343/api/users').then((ret) => {
         console.log(ret);
@@ -98,11 +102,9 @@ export default {
         this.$store.dispatch('setReplies', ret.data);
       });
     },
+
     selectUser(id) {
       this.selectedUserId = id;
-    },
-    getUserById(id) {
-      return this.users.filter((user) => user.id == id)[0];
     },
     deleteUser() {
       this.axios
@@ -118,6 +120,7 @@ export default {
           this.setReplies();
         });
     },
+
     reset() {
       this.done = false;
       this.dialog = false;

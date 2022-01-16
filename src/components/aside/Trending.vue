@@ -11,7 +11,7 @@
 
       <v-list-item v-for="item in hashtags" :key="item" link>
         <v-list-item-content>
-          <v-col class="pb-0 pt-1">
+          <v-col cols="10" class="pb-0 pt-1">
             <v-list-item-subtitle class="grey--text opacity"
               >Trending</v-list-item-subtitle
             >
@@ -42,7 +42,6 @@ import { Icon } from '@iconify/vue2';
 
 export default {
   name: 'Trending',
-
   components: {
     Icon,
     Options: () => import('@/components/Options.vue'),
@@ -60,6 +59,10 @@ export default {
     },
   },
   computed: {
+    //data
+    more() {
+      return data.more.trending;
+    },
     hashtags() {
       let hashtags = [];
       if (this.tweets) {
@@ -71,11 +74,10 @@ export default {
       }
       return hashtags.slice(0, 5);
     },
+
+    //state
     tweets() {
       return this.$store.getters.tweets;
-    },
-    more() {
-      return data.more.trending;
     },
   },
 };

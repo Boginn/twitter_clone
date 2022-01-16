@@ -50,9 +50,9 @@ import { Icon } from '@iconify/vue2';
 import data from '@/data/data.js';
 import helpers from '@/services/helpers.js';
 import breakpoints from '@/data/breakpoints.js';
+
 export default {
   name: 'Reply',
-
   components: {
     Icon,
   },
@@ -62,18 +62,18 @@ export default {
     post: Object,
   },
 
-  mounted() {
-    console.log(this.post);
-  },
   data: () => ({ reply: `` }),
 
   computed: {
+    //data
     options() {
       return data.options;
     },
     rules() {
       return data.rules;
     },
+
+    //breakpoint
     avatarSize() {
       return breakpoints.avatarSize(this.$vuetify.breakpoint.name);
     },
@@ -81,6 +81,7 @@ export default {
       return breakpoints.iconSize(this.$vuetify.breakpoint.name);
     },
 
+    //eval
     validate() {
       return helpers.validateLength(this.reply);
     },
@@ -107,7 +108,10 @@ export default {
         this.$store.dispatch('setTweets', ret.data);
       });
     },
+
     submit() {
+      /* check if replying to a Tweet or a Reply (this.post),
+      assign id accordingly */
       let tweetId = this.post.tweetId ? this.post.tweetId : this.post.id;
 
       this.axios

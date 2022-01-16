@@ -25,7 +25,7 @@
         </v-col>
       </v-row>
 
-      <v-row class="">
+      <v-row>
         <v-col cols="1"> </v-col>
         <div
           class="white border-left mr-4"
@@ -48,7 +48,6 @@ import helpers from '@/services/helpers.js';
 
 export default {
   name: 'ReplyModal',
-
   props: {
     post: Object,
     selectedPost: Object,
@@ -77,6 +76,7 @@ export default {
   data: () => ({ modal: false }),
 
   computed: {
+    //breakpoint
     avatarSize() {
       return breakpoints.avatarSize(this.$vuetify.breakpoint.name);
     },
@@ -96,7 +96,6 @@ export default {
     },
     formatDate(date) {
       return helpers.formatDate(date);
-      // return new Date(date).toLocaleString();
     },
   },
 };

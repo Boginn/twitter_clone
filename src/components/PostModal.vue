@@ -31,6 +31,7 @@ export default {
   data: () => ({ modal: true }),
 
   computed: {
+    //breakpoint
     avatarSize() {
       return breakpoints.avatarSize(this.$vuetify.breakpoint.name);
     },

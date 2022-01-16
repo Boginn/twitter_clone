@@ -8,10 +8,7 @@
           :post="r"
           @done="selectedTweet = undefined"
         />
-        <v-list-item
-          link
-          class="border-bottom font-11 white--text d-flex align-start"
-        >
+        <v-list-item link class="border-bottom">
           <v-col cols="1" class="pl-2">
             <router-link :to="`/${getUserById(r.userId).handle.substring(1)}`">
               <v-avatar
@@ -104,16 +101,11 @@ import helpers from '@/services/helpers.js';
 import breakpoints from '@/data/breakpoints.js';
 
 export default {
-  name: 'TweetReplies',
-
+  name: 'Replies',
   components: {
     Icon,
     Options: () => import('@/components/Options.vue'),
     ReplyModal: () => import('@/components/ReplyModal.vue'),
-  },
-
-  mounted() {
-    // this.setUsers();
   },
 
   props: {
@@ -129,11 +121,12 @@ export default {
   },
 
   computed: {
+    //data
     options() {
       return data.options;
     },
 
-    //eval
+    //breakpoint
     avatarSize() {
       return breakpoints.avatarSize(this.$vuetify.breakpoint.name);
     },
@@ -141,15 +134,14 @@ export default {
       return breakpoints.iconSize(this.$vuetify.breakpoint.name);
     },
 
+    //eval
     validate() {
       return helpers.validateLength(this.post);
     },
 
     //state
     user() {
-      return this.users.filter(
-        (user) => user.id == this.$store.getters.loggedUserId
-      )[0];
+      return this.$store.getters.user;
     },
     users() {
       return this.$store.getters.users;
@@ -162,12 +154,8 @@ export default {
   },
 
   methods: {
-    more(r) {
-      if (r.userId == this.user.id) {
-        return data.more.ownedTweet;
-      } else {
-        return data.more.tweet;
-      }
+    getUserById(id) {
+      return this.users.filter((user) => user.id == id)[0];
     },
     setReplies() {
       this.axios.get('https://localhost:44343/api/replies').then((ret) => {
@@ -175,12 +163,19 @@ export default {
         this.$store.dispatch('setReplies', ret.data);
       });
     },
-    getUserById(id) {
-      return this.users.filter((user) => user.id == id)[0];
-    },
 
+    more(p) {
+      /* give options depending on if the tweet belongs to the user*/
+      return p.userId == this.user.id ? data.more.ownedTweet : data.more.tweet;
+    },
     selectOption(o) {
       this.selectedOption = o;
+    },
+
+    hasLiked(reply) {
+      reply.replyLikes.forEach((entry) => {
+        return entry.userId == this.user.id ? true : false;
+      });
     },
 
     interact(reply, option) {
@@ -210,21 +205,6 @@ export default {
 
     formatDate(date) {
       return helpers.formatDate(date);
-    },
-
-    hasLiked(reply) {
-      let res;
-
-      reply.replyLikes.forEach((entry) => {
-        // console.log(entry.userId, this.user.id);
-        if (entry.userId == this.user.id) {
-          // console.log('true');
-          res = true;
-        } else {
-          res = false;
-        }
-      });
-      return res;
     },
   },
 };

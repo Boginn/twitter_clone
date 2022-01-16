@@ -55,9 +55,9 @@ import { Icon } from '@iconify/vue2';
 import data from '@/data/data.js';
 import helpers from '@/services/helpers.js';
 import breakpoints from '@/data/breakpoints.js';
+
 export default {
   name: 'Post',
-
   components: {
     Icon,
   },
@@ -69,18 +69,23 @@ export default {
   data: () => ({ post: `` }),
 
   computed: {
+    //data
     options() {
       return data.options;
     },
     rules() {
       return data.rules;
     },
+
+    //breakpoint
     avatarSize() {
       return breakpoints.avatarSize(this.$vuetify.breakpoint.name);
     },
     iconSize() {
       return breakpoints.iconSize(this.$vuetify.breakpoint.name);
     },
+
+    //eval
     validate() {
       return helpers.validateLength(this.post);
     },
@@ -92,8 +97,15 @@ export default {
   },
 
   methods: {
+    getUserById(id) {
+      return this.users.filter((u) => u.id == id)[0];
+    },
     submit() {
       if (this.validate) {
+        /* Extracts hashtags from a post, 
+        assigns the first one to variable hashtag
+        and concats it to the end of the post */
+
         let post,
           hashtag,
           hashtags = this.getHashTags(this.post);
@@ -107,6 +119,8 @@ export default {
           post = this.post;
           hashtag = '';
         }
+
+        /**/
 
         this.axios
           .post('https://localhost:44343/api/tweets/create', {
@@ -123,11 +137,8 @@ export default {
       }
     },
 
-    getUserById(id) {
-      return this.users.filter((u) => u.id == id)[0];
-    },
-
     getHashTags(inputText) {
+      /* Extracts hashtags from a string */
       var regex = /(?:^|\s)(?:#)([a-zA-Z\d]+)/gm;
       var matches = [];
       var match;

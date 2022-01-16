@@ -12,24 +12,16 @@
 </template>
 
 <script>
-// import { Icon } from '@iconify/vue2';
-// import data from '@/data/data.js';
 export default {
   name: 'Aside',
-
   components: {
-    // Icon,
-    SwitchUser: () => import('@/components/SwitchUser.vue'),
-    AddUser: () => import('@/components/AddUser.vue'),
-    DeleteUser: () => import('@/components/DeleteUser.vue'),
-    Trending: () => import('@/components/Trending.vue'),
+    SwitchUser: () => import('@/components/aside/SwitchUser.vue'),
+    AddUser: () => import('@/components/aside/AddUser.vue'),
+    DeleteUser: () => import('@/components/aside/DeleteUser.vue'),
+    Trending: () => import('@/components/aside/Trending.vue'),
   },
 
   computed: {
-    //state
-    users() {
-      return this.$store.getters.users;
-    },
     isDeveloper() {
       return this.$store.getters.isDeveloper;
     },

@@ -8,37 +8,13 @@
 <script>
 export default {
   name: 'Home',
-
   components: {
     Post: () => import('@/components/Post.vue'),
     Feed: () => import('@/components/Feed.vue'),
-
-    // TimeAgo,
   },
 
-  mounted() {},
-
-  data: () => ({}),
-
   computed: {
-    //state
-    user() {
-      return this.users.filter(
-        (user) => user.id == this.$store.getters.loggedUserId
-      )[0];
-    },
-    users() {
-      return this.$store.getters.users;
-    },
-    tweets() {
-      return this.$store.getters.tweets;
-    },
-    following() {
-      return this.$store.getters.follows.filter(
-        (f) => f.followerId == this.user.id
-      );
-    },
-
+    //data
     filteredTweets() {
       let result = [];
 
@@ -50,6 +26,22 @@ export default {
         });
       });
       return result;
+    },
+
+    //state
+    user() {
+      return this.$store.getters.user;
+    },
+    users() {
+      return this.$store.getters.users;
+    },
+    tweets() {
+      return this.$store.getters.tweets;
+    },
+    following() {
+      return this.$store.getters.follows.filter(
+        (f) => f.followerId == this.user.id
+      );
     },
   },
 

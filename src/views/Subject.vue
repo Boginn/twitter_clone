@@ -38,10 +38,21 @@
 
         <v-divider></v-divider>
         <v-row class="pb-3 pt-3 pl-1">
-          <div class="grey--text" v-if="following">
-            <span class="text--text">{{ followers.length }}</span> Followers
-            <span class="text--text ml-6"> {{ following.length }}</span>
-            Following
+          <div v-if="following">
+            <router-link
+              :to="`/${$route.params.handle}/followers`"
+              class="grey--text"
+            >
+              <span class="text--text">{{ followers.length }}</span> Followers
+            </router-link>
+
+            <router-link
+              :to="`/${$route.params.handle}/following`"
+              class="grey--text"
+            >
+              <span class="text--text ml-6"> {{ following.length }}</span>
+              Following
+            </router-link>
           </div>
         </v-row>
       </v-container>
@@ -62,8 +73,7 @@ import helpers from '@/services/helpers.js';
 import breakpoints from '@/data/breakpoints.js';
 
 export default {
-  name: 'User',
-
+  name: 'Subject',
   components: {
     Feed: () => import('@/components/Feed.vue'),
   },
@@ -73,7 +83,6 @@ export default {
     this.setSubject();
     this.setUsers();
     this.setFollows();
-
     this.setTab();
   },
 
@@ -89,18 +98,13 @@ export default {
   }),
 
   computed: {
+    //data
     options() {
       return data.options;
     },
-
     rules() {
       return data.rules;
     },
-    avatarSize() {
-      return breakpoints.avatarSize(this.$vuetify.breakpoint.name);
-    },
-
-    //
     followers() {
       return this.follows.filter((f) => f.userId == this.subject.id);
     },
@@ -108,17 +112,21 @@ export default {
       return this.follows.filter((f) => f.followerId == this.subject.id);
     },
 
+    //breakpoint
+    avatarSize() {
+      return breakpoints.avatarSize(this.$vuetify.breakpoint.name);
+    },
+
     //eval
     hasFollowed() {
+      console.log(this.followers);
       return this.followers.filter((entry) => entry.followerId == this.user.id)
         .length;
     },
 
     //state
     user() {
-      return this.users.filter(
-        (user) => user.id == this.$store.getters.loggedUserId
-      )[0];
+      return this.$store.getters.user;
     },
     users() {
       return this.$store.getters.users;
@@ -131,7 +139,6 @@ export default {
     },
     tweetsReplies() {
       let tweetsReplies = [];
-
       this.tweets
         .filter((t) => t.userId == this.subject.id)
         .forEach((t) => {
@@ -151,14 +158,9 @@ export default {
   },
 
   methods: {
-    more(t) {
-      if (t.userId == this.user.id) {
-        return data.more.ownedTweet;
-      } else {
-        return data.more.tweet;
-      }
+    getUserById(id) {
+      return this.users.filter((u) => u.id == id)[0];
     },
-
     setUsers() {
       this.axios.get('https://localhost:44343/api/users').then((ret) => {
         console.log(ret);
@@ -178,13 +180,6 @@ export default {
       });
     },
     setSubject() {
-      // this.axios
-      //   .get(`https://localhost:44343/api/users/${this.$route.params.id}`)
-      //   .then((ret) => {
-      //     console.log(ret);
-      //     this.subject = ret.data;
-      //   });
-      console.log(this.$route.params.handle);
       this.axios
         .get(`https://localhost:44343/api/users/${this.$route.params.handle}`)
         .then((ret) => {
@@ -195,17 +190,11 @@ export default {
     setTab() {
       this.tab = this.tweets;
     },
-    // setUserById(id) {
-    //   this.axios.get(`https://localhost:44343/api/users/${id}`).then((ret) => {
-    //     console.log(ret);
-    //     this.user = ret.data;
-    //   });
-    // },
 
-    getUserById(id) {
-      return this.users.filter((u) => u.id == id)[0];
+    more(p) {
+      /* give options depending on if the tweet belongs to the user*/
+      return p.userId == this.user.id ? data.more.ownedTweet : data.more.tweet;
     },
-
     selectOption(o) {
       this.selectedOption = o;
     },

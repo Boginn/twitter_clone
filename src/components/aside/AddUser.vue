@@ -107,10 +107,6 @@ import breakpoints from '@/data/breakpoints.js';
 export default {
   name: 'AddUser',
 
-  mounted() {
-    // this.setUsers();
-  },
-
   data: () => ({
     valid: true,
     name: '',
@@ -130,14 +126,14 @@ export default {
   }),
 
   computed: {
-    users() {
-      return this.$store.getters.users;
-    },
     colors() {
       return data.colors;
     },
     avatarSize() {
       return breakpoints.avatarSize(this.$vuetify.breakpoint.name);
+    },
+    users() {
+      return this.$store.getters.users;
     },
   },
 
@@ -148,6 +144,7 @@ export default {
         this.$store.dispatch('setUsers', ret.data);
       });
     },
+
     addUser() {
       this.axios
         .post('https://localhost:44343/api/users/create', {
@@ -165,7 +162,6 @@ export default {
     },
 
     validate() {
-      // this.$refs.form.validate();
       if (this.$refs.form.validate()) {
         this.addUser();
       }
