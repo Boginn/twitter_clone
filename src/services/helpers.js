@@ -2,6 +2,34 @@ export default {
   validateLength(str) {
     return str.length != `` && str.length <= 280;
   },
+  sortByDate(tweets) {
+    tweets.sort(function (a, b) {
+      let d1 = a.date;
+      let d2 = b.date;
+
+      if (a.replies.length) {
+        a.replies.sort(function (c, d) {
+          return new Date(d.date) - new Date(c.date);
+        });
+        if (new Date(d1) <= new Date(a.replies[0].date)) {
+          d1 = a.replies[0].date;
+          console.log(new Date(d1));
+        }
+      }
+      if (b.replies.length) {
+        b.replies.sort(function (c, d) {
+          return new Date(d.date) - new Date(c.date);
+        });
+        if (new Date(d2) <= new Date(b.replies[0].date)) {
+          d2 = b.replies[0].date;
+          console.log(new Date(d2));
+        }
+      }
+
+      return new Date(d2) - new Date(d1);
+    });
+    return tweets;
+  },
   formatDate(date) {
     var now = new Date();
     var then = new Date(date);

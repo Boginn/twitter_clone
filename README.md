@@ -16,6 +16,7 @@ Follow a user.
 Reactive.
 Filtered home feed by users followed.
 Unfiltered explore feed.
+Feeds are sorted by date of the tweet and replies.
 Details about a user.
 ```
 ## Developer Mode
@@ -25,8 +26,8 @@ Developer Mode replaces the 'Trends for you' element with a dashboard.
 From there you can: 
 
 <ul>
-<li>switch, add and delete users,</li>
-<li>switch between dark and light mode.</li>
+<li>switch, add and delete users</li>
+<li>switch between dark and light mode</li>
 </ul>
 
 

@@ -1,6 +1,6 @@
 <template>
   <v-list class="ma-0 pa-0 transparent" v-if="ready">
-    <div v-for="t in tweets.slice().reverse()" :key="t.id">
+    <div v-for="t in tweets" :key="t.id">
       <ReplyModal
         v-if="selectedTweet"
         :selectedPost="selectedTweet"

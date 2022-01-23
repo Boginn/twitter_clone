@@ -30,22 +30,24 @@
       </div>
     </v-col>
     <v-col cols="4">
-      <v-form>
-        <v-autocomplete
-          v-model="searchString"
-          :disabled="isUpdating"
-          solo
-          chips
-          color="white"
-          label="Search..."
-          clearable
-          append-icon="mdi-magnify"
-          :open-on-click="false"
-          style="padding-top: 25px; max-width: 450px !important"
-          class="br-25"
-        >
-        </v-autocomplete>
-      </v-form>
+      <v-container class="min-width">
+        <v-form>
+          <v-autocomplete
+            v-model="searchString"
+            :disabled="isUpdating"
+            solo
+            chips
+            color="white"
+            label="Search..."
+            clearable
+            append-icon="mdi-magnify"
+            :open-on-click="false"
+            style="padding-top: 25px"
+            class="br-25"
+          >
+          </v-autocomplete>
+        </v-form>
+      </v-container>
     </v-col>
     <v-col cols="4"> </v-col>
   </v-app-bar>
@@ -90,5 +92,8 @@ export default {
 
   font-size: 13pt !important;
   font-weight: 400 !important;
+}
+.min-width {
+  min-width: 445px !important;
 }
 </style>

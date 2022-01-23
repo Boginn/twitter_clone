@@ -1,12 +1,13 @@
 <template>
-  <v-container class="pa-0">
+  <v-container class="pa-0" v-if="filteredTweets">
     <Post v-if="users" :user="user" @change="setTweets()" />
-    <Feed v-if="tweets" :tweets="filteredTweets" />
+    <Feed v-if="tweets" :tweets="sortedTweets" />
   </v-container>
 </template>
 
 <script>
 import data from '@/data/data.js';
+import helpers from '@/services/helpers.js';
 
 export default {
   name: 'Home',
@@ -17,6 +18,9 @@ export default {
 
   computed: {
     //data
+    sortedTweets() {
+      return this.sortByDate(this.filteredTweets);
+    },
     filteredTweets() {
       let result = [];
 
@@ -56,6 +60,9 @@ export default {
         console.log(ret);
         this.$store.dispatch('setTweets', ret.data);
       });
+    },
+    sortByDate(date) {
+      return helpers.sortByDate(date);
     },
   },
 };
