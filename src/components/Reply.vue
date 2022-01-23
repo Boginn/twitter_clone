@@ -97,13 +97,13 @@ export default {
       return this.users.filter((user) => user.id == id)[0];
     },
     setReplies() {
-      this.axios.get('https://localhost:44343/api/replies').then((ret) => {
+      this.axios.get(`${data.api}/replies`).then((ret) => {
         console.log(ret);
         this.$store.dispatch('setReplies', ret.data);
       });
     },
     setTweets() {
-      this.axios.get('https://localhost:44343/api/tweets').then((ret) => {
+      this.axios.get(`${data.api}/tweets`).then((ret) => {
         console.log(ret);
         this.$store.dispatch('setTweets', ret.data);
       });
@@ -115,7 +115,7 @@ export default {
       let tweetId = this.post.tweetId ? this.post.tweetId : this.post.id;
 
       this.axios
-        .post('https://localhost:44343/api/replies/create', {
+        .post(`${data.api}/replies/create`, {
           content: this.reply,
           date: new Date(),
           userId: this.user.id,

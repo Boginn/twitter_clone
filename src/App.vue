@@ -8,6 +8,8 @@
 </template>
 
 <script>
+import data from '@/data/data.js';
+
 export default {
   name: 'App',
 
@@ -26,25 +28,25 @@ export default {
 
   methods: {
     setUsers() {
-      this.axios.get('https://localhost:44343/api/users').then((ret) => {
+      this.axios.get(`${data.api}/users`).then((ret) => {
         console.log(ret);
         this.$store.dispatch('setUsers', ret.data);
       });
     },
     setTweets() {
-      this.axios.get('https://localhost:44343/api/tweets').then((ret) => {
+      this.axios.get(`${data.api}/tweets`).then((ret) => {
         console.log(ret);
         this.$store.dispatch('setTweets', ret.data);
       });
     },
     setReplies() {
-      this.axios.get('https://localhost:44343/api/replies').then((ret) => {
+      this.axios.get(`${data.api}/replies`).then((ret) => {
         console.log(ret);
         this.$store.dispatch('setReplies', ret.data);
       });
     },
     setFollows() {
-      this.axios.get('https://localhost:44343/api/follows').then((ret) => {
+      this.axios.get(`${data.api}/follows`).then((ret) => {
         console.log(ret.data);
         this.$store.dispatch('setFollows', ret.data);
       });

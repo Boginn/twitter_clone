@@ -6,7 +6,7 @@
       class="d-flex justify-center"
     >
       <v-tab v-for="tab in tabs" :key="tab.name">
-        <span @click="$router.push(tab.route)">
+        <span @click="pushRoute(tab.route)">
           {{ tab.name }}
         </span>
       </v-tab>
@@ -187,20 +187,20 @@ export default {
       return this.users.filter((user) => user.id == id)[0];
     },
     setUsers() {
-      this.axios.get('https://localhost:44343/api/users').then((ret) => {
+      this.axios.get(`${data.api}/users`).then((ret) => {
         console.log(ret);
         this.$store.dispatch('setUsers', ret.data);
       });
     },
     setFollows() {
-      this.axios.get('https://localhost:44343/api/follows').then((ret) => {
+      this.axios.get(`${data.api}/follows`).then((ret) => {
         console.log(ret.data);
         this.$store.dispatch('setFollows', ret.data);
       });
     },
     setSubject() {
       this.axios
-        .get(`https://localhost:44343/api/users/${this.$route.params.handle}`)
+        .get(`${data.api}/users/${this.$route.params.handle}`)
         .then((ret) => {
           console.log(ret);
           this.subject = ret.data;
@@ -211,10 +211,16 @@ export default {
       this.selectedOption = o;
     },
 
+    pushRoute(route) {
+      if (this.$router.currentRoute.path != route) {
+        this.$router.push(route);
+      }
+    },
+
     interact(id, option) {
       if (option == 'Follow') {
         this.axios
-          .put(`https://localhost:44343/api/users/follow/${id}`, this.user)
+          .put(`${data.api}/users/follow/${id}`, this.user)
           .then((ret) => {
             console.log(ret);
           });

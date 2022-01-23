@@ -23,6 +23,8 @@
 </template>
 
 <script>
+import data from '@/data/data.js';
+
 export default {
   name: 'SwitchUser',
 
@@ -45,7 +47,7 @@ export default {
       console.log(this.users);
     },
     setUsers() {
-      this.axios.get('https://localhost:44343/api/users').then((ret) => {
+      this.axios.get(`${data.api}/users`).then((ret) => {
         console.log(ret);
         this.$store.dispatch('setUsers', ret.data);
       });

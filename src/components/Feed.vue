@@ -167,19 +167,19 @@ export default {
       return this.users.filter((user) => user.id == id)[0];
     },
     setUsers() {
-      this.axios.get('https://localhost:44343/api/users').then((ret) => {
+      this.axios.get(`${data.api}/users`).then((ret) => {
         console.log(ret);
         this.$store.dispatch('setUsers', ret.data);
       });
     },
     setTweets() {
-      this.axios.get('https://localhost:44343/api/tweets').then((ret) => {
+      this.axios.get(`${data.api}/tweets`).then((ret) => {
         //  console.log(ret);
         this.$store.dispatch('setTweets', ret.data);
       });
     },
     setReplies() {
-      this.axios.get('https://localhost:44343/api/replies').then((ret) => {
+      this.axios.get(`${data.api}/replies`).then((ret) => {
         //  console.log(ret);
         this.$store.dispatch('setReplies', ret.data);
       });
@@ -208,20 +208,14 @@ export default {
       if (option == 'Like') {
         if (isTweet) {
           this.axios
-            .put(
-              `https://localhost:44343/api/tweets/like/${post.id}`,
-              this.user
-            )
+            .put(`${data.api}/tweets/like/${post.id}`, this.user)
             .then((ret) => {
               console.log(ret);
               this.setTweets();
             });
         } else {
           this.axios
-            .put(
-              `https://localhost:44343/api/replies/like/${post.id}`,
-              this.user
-            )
+            .put(`${data.api}/replies/like/${post.id}`, this.user)
             .then((ret) => {
               console.log(ret);
               this.setReplies();
@@ -234,14 +228,14 @@ export default {
         console.log(post);
         if (isTweet) {
           this.axios
-            .delete(`https://localhost:44343/api/tweets/delete/${post.id}`)
+            .delete(`${data.api}/tweets/delete/${post.id}`)
             .then((ret) => {
               console.log(ret);
               this.setTweets();
             });
         } else {
           this.axios
-            .delete(`https://localhost:44343/api/replies/delete/${post.id}`)
+            .delete(`${data.api}/replies/delete/${post.id}`)
             .then((ret) => {
               console.log(ret);
               this.setReplies();

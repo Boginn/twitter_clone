@@ -1,3 +1,5 @@
+const api = 'https://localhost:44343/api';
+
 const routes = {
   home: [
     {
@@ -172,6 +174,7 @@ const rules = {
 };
 
 export default {
+  api,
   routes,
   options,
   colors,

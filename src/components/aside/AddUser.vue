@@ -139,7 +139,7 @@ export default {
 
   methods: {
     setUsers() {
-      this.axios.get('https://localhost:44343/api/users').then((ret) => {
+      this.axios.get(`${data.api}/users`).then((ret) => {
         console.log(ret);
         this.$store.dispatch('setUsers', ret.data);
       });
@@ -147,7 +147,7 @@ export default {
 
     addUser() {
       this.axios
-        .post('https://localhost:44343/api/users/create', {
+        .post(`${data.api}/users/create`, {
           name: this.name,
           color: this.color,
           handle: this.handle,

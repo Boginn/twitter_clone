@@ -123,7 +123,7 @@ export default {
         /**/
 
         this.axios
-          .post('https://localhost:44343/api/tweets/create', {
+          .post(`${data.api}/tweets/create`, {
             content: post,
             hashtag: hashtag,
             date: new Date(),

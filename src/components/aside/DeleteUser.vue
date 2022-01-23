@@ -65,6 +65,7 @@
 </template>
 
 <script>
+import data from '@/data/data.js';
 export default {
   name: 'DeleteUser',
 
@@ -85,19 +86,19 @@ export default {
       return this.users.filter((user) => user.id == id)[0];
     },
     setUsers() {
-      this.axios.get('https://localhost:44343/api/users').then((ret) => {
+      this.axios.get(`${data.api}/users`).then((ret) => {
         console.log(ret);
         this.$store.dispatch('setUsers', ret.data);
       });
     },
     setTweets() {
-      this.axios.get('https://localhost:44343/api/tweets').then((ret) => {
+      this.axios.get(`${data.api}/tweets`).then((ret) => {
         console.log(ret);
         this.$store.dispatch('setTweets', ret.data);
       });
     },
     setReplies() {
-      this.axios.get('https://localhost:44343/api/replies').then((ret) => {
+      this.axios.get(`${data.api}/replies`).then((ret) => {
         console.log(ret);
         this.$store.dispatch('setReplies', ret.data);
       });
@@ -108,9 +109,7 @@ export default {
     },
     deleteUser() {
       this.axios
-        .delete(
-          `https://localhost:44343/api/users/delete/${this.selectedUserId}`
-        )
+        .delete(`${data.api}/users/delete/${this.selectedUserId}`)
         .then((ret) => {
           console.log(ret);
           this.done = true;

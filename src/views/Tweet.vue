@@ -173,19 +173,19 @@ export default {
       return this.users.filter((user) => user.id == id)[0];
     },
     setUsers() {
-      this.axios.get('https://localhost:44343/api/users').then((ret) => {
+      this.axios.get(`${data.api}/users`).then((ret) => {
         console.log(ret);
         this.$store.dispatch('setUsers', ret.data);
       });
     },
     setTweets() {
-      this.axios.get('https://localhost:44343/api/tweets').then((ret) => {
+      this.axios.get(`${data.api}/tweets`).then((ret) => {
         console.log(ret);
         this.$store.dispatch('setTweets', ret.data);
       });
     },
     setTweetById(id) {
-      this.axios.get(`https://localhost:44343/api/tweets/${id}`).then((ret) => {
+      this.axios.get(`${data.api}/tweets/${id}`).then((ret) => {
         console.log(ret);
         this.tweet = ret.data;
       });
@@ -202,7 +202,7 @@ export default {
     interact(tweet, option) {
       if (option == 'Like') {
         this.axios
-          .put(`https://localhost:44343/api/tweets/like/${tweet.id}`, {
+          .put(`${data.api}/tweets/like/${tweet.id}`, {
             Id: this.user.id,
             Name: this.user.name,
           })
@@ -214,7 +214,7 @@ export default {
       if (option == 'Delete') {
         console.log(tweet);
         this.axios
-          .delete(`https://localhost:44343/api/tweets/delete/${tweet.id}`)
+          .delete(`${data.api}/tweets/delete/${tweet.id}`)
           .then((ret) => {
             console.log(ret);
             this.setTweets();
@@ -223,10 +223,7 @@ export default {
       }
       if (option == 'Follow') {
         this.axios
-          .put(
-            `https://localhost:44343/api/users/follow/${tweet.userId}`,
-            this.user
-          )
+          .put(`${data.api}/users/follow/${tweet.userId}`, this.user)
           .then((ret) => {
             console.log(ret);
           });

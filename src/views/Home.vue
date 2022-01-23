@@ -1,11 +1,13 @@
 <template>
   <v-container class="pa-0">
     <Post v-if="users" :user="user" @change="setTweets()" />
-    <Feed :tweets="filteredTweets" />
+    <Feed v-if="tweets" :tweets="filteredTweets" />
   </v-container>
 </template>
 
 <script>
+import data from '@/data/data.js';
+
 export default {
   name: 'Home',
   components: {
@@ -19,6 +21,9 @@ export default {
       let result = [];
 
       this.tweets.forEach((tweet) => {
+        if (tweet.userId == this.user.id) {
+          result.push(tweet);
+        }
         this.following.forEach((entry) => {
           if (entry.userId == tweet.userId) {
             result.push(tweet);
@@ -47,7 +52,7 @@ export default {
 
   methods: {
     setTweets() {
-      this.axios.get('https://localhost:44343/api/tweets').then((ret) => {
+      this.axios.get(`${data.api}/tweets`).then((ret) => {
         console.log(ret);
         this.$store.dispatch('setTweets', ret.data);
       });

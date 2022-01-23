@@ -158,7 +158,7 @@ export default {
       return this.users.filter((user) => user.id == id)[0];
     },
     setReplies() {
-      this.axios.get('https://localhost:44343/api/replies').then((ret) => {
+      this.axios.get(`${data.api}/replies`).then((ret) => {
         console.log(ret);
         this.$store.dispatch('setReplies', ret.data);
       });
@@ -173,18 +173,21 @@ export default {
     },
 
     hasLiked(reply) {
+      let res = false;
       reply.replyLikes.forEach((entry) => {
-        return entry.userId == this.user.id ? true : false;
+        console.log(entry.userId);
+        console.log(this.user.id);
+        if (entry.userId == this.user.id) {
+          res = true;
+        }
       });
+      return res;
     },
 
     interact(reply, option) {
       if (option == 'Like') {
         this.axios
-          .put(
-            `https://localhost:44343/api/replies/like/${reply.id}`,
-            this.user
-          )
+          .put(`${data.api}/replies/like/${reply.id}`, this.user)
           .then((ret) => {
             console.log(ret);
             this.setReplies();
@@ -192,7 +195,7 @@ export default {
       }
       if (option == 'Delete') {
         this.axios
-          .delete(`https://localhost:44343/api/replies/delete/${reply.id}`)
+          .delete(`${data.api}/replies/delete/${reply.id}`)
           .then((ret) => {
             console.log(ret);
             this.setReplies();
