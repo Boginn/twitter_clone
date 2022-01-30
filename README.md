@@ -3,6 +3,16 @@
 ### by Finnbogi Jökull Pétursson
 <br>
 
+## Installation
+```
+# install dependencies
+npm install
+
+# compiles and hot-reloads for development at localhost:8080
+npm run serve
+
+```
+
 
 ## Functionality
 ```
