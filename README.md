@@ -11,6 +11,10 @@ npm install
 # compiles and hot-reloads for development at localhost:8080
 npm run serve
 
+Navigate to the file data.js located in ./src/data/
+At the top of the file, look at the string variable 'api'
+Make sure the port matches the one on your machine
+
 ```
 
 
